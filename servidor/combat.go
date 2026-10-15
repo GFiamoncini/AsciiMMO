@@ -119,7 +119,11 @@ func (wd *World) strikeOpt(owner int, now time.Time, lo, sp int, in shape, o hit
 	}
 	// dmg sorteia o dano num alvo em (x, y); às vezes sai crítico. Quem bateu
 	// vê o número subir sobre o alvo.
-	dmg := func(x, y float64, lv int) int {
+	// dmgK leva também o % do elemento no alvo (fraqueza 150, resistência 60:
+	// bestiario.go); dmg é o golpe em quem não tem fraqueza.
+	var dmgK func(x, y float64, lv, weak int) int
+	dmg := func(x, y float64, lv int) int { return dmgK(x, y, lv, 100) }
+	dmgK = func(x, y float64, lv, weak int) int {
 		d := lo + wd.rng.Intn(max(1, sp))
 		odds := critOdds + o.Crit
 		if p != nil {
@@ -142,11 +146,17 @@ func (wd *World) strikeOpt(owner int, now time.Time, lo, sp int, in shape, o hit
 		if crit {
 			d = d * 18 / 10
 		}
+		d = max(1, d*weak/100)
 		dealt += d
 		if p != nil {
-			if crit {
+			switch {
+			case crit:
 				wd.pop(p, fmt.Sprintf("CRÍTICO -%d", d), 0xffa030, x, y, now)
-			} else {
+			case weak > 100:
+				wd.pop(p, fmt.Sprintf("FRACO -%d", d), 0xffe040, x, y, now)
+			case weak < 100:
+				wd.pop(p, fmt.Sprintf("-%d resiste", d), 0x8a8a96, x, y, now)
+			default:
 				wd.pop(p, fmt.Sprintf("-%d", d), elemPopColor[clampInt(o.Elem, 0, numElem-1)], x, y, now)
 			}
 		}
@@ -169,7 +179,7 @@ func (wd *World) strikeOpt(owner int, now time.Time, lo, sp int, in shape, o hit
 		if !m.Alive || now.Sub(m.bornAt) < mobRise || !in(m.X, m.Y, mobRadius) {
 			continue
 		}
-		wd.damageMob(m, dmg(m.X, m.Y-26, mobLv(m.Kind)), p, now)
+		wd.damageMob(m, dmgK(m.X, m.Y-26, mobLv(m.Kind), weakPct(m.Kind, o.Elem)), p, now)
 		if m.Alive {
 			wd.afflictMob(m, o, owner, now)
 		}
@@ -282,14 +292,19 @@ func (wd *World) enter(p *Player) {
 func (wd *World) Use(id, i int, aim *float64) {
 	wd.mu.Lock()
 	defer wd.mu.Unlock()
-	now := wd.clock()
-	p, ok := wd.players[id]
-	if !ok || !p.knows(i) || p.paused {
-		return
+	if p, ok := wd.players[id]; ok {
+		wd.use(p, i, aim, wd.clock())
+	}
+}
+
+// use solta o golpe i do jogador (com o lock); true se saiu.
+func (wd *World) use(p *Player, i int, aim *float64, now time.Time) bool {
+	if !p.knows(i) || p.paused {
+		return false
 	}
 	sk := &classes[p.Class].Skills[i]
 	if p.MP < sk.Cost || now.Before(p.ready[i]) {
-		return
+		return false
 	}
 	dir := math.Atan2(float64(p.FaceY), float64(p.FaceX))
 	if aim != nil && !math.IsNaN(*aim) && !math.IsInf(*aim, 0) {
@@ -298,6 +313,7 @@ func (wd *World) Use(id, i int, aim *float64) {
 	p.ready[i], p.MP = now.Add(sk.CD*time.Duration(100-min(45, p.bon.CDR))/100), p.MP-sk.Cost
 	p.act, p.actAt, p.actDir = i, now, dir
 	sk.do(wd.newCast(p, sk, dir, now))
+	return true
 }
 
 // Attack é o golpe básico na direção em que o jogador anda.

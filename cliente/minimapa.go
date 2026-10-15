@@ -218,6 +218,10 @@ func (g *Game) drawMap(dst *ebiten.Image, me *proto.Player, x, y, mw, mh float64
 	}
 	dot(float64(me.X), float64(me.Y), color.Black, 7+s)
 	dot(float64(me.X), float64(me.Y), cGold, 5+s)
+	if gl := g.cur.Goal; gl != nil { // destino do caminho
+		dot(float64(gl[0]), float64(gl[1]), color.Black, 7+s)
+		dot(float64(gl[0]), float64(gl[1]), rgbaHex(0xff8040), 5+s)
+	}
 
 	// Missões: "!" dourado na principal, "?" lilás nas secundárias, com um
 	// anel do tamanho da área; no subsolo, o mapa de cima mostra a entrada.

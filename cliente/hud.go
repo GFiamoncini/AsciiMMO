@@ -105,6 +105,7 @@ func (g *Game) drawHUD(dst *ebiten.Image, me *proto.Player) {
 
 	pw := 286.0
 	y := 8 + g.drawStatusCard(dst, me, 8, 8) + 4
+	g.drawModeIcon(dst, 8+286+6, 8) // modo de combate (pesca.go)
 
 	// Status negativos e a proteção das ervas, com o tempo que falta.
 	stc := []color.RGBA{rgbaHex(0x9aff6a), rgbaHex(0x8ac8ff), rgbaHex(0xffb050)}
@@ -198,8 +199,9 @@ func (g *Game) drawHUD(dst *ebiten.Image, me *proto.Player) {
 		mw, mh := float64(src.w)*k, float64(src.h)*k
 		mx, my := (cw-mw)/2, (chh-mh)/2+10
 		g.panel(dst, mx-6, my-28, mw+12, mh+34, cGold)
-		g.txt(dst, "Mapa — as áreas escuras ainda não foram exploradas (M fecha)", mx, my-22, cGold, 13, false, alignLeft)
+		g.txt(dst, "Mapa — as áreas escuras ainda não foram exploradas (M fecha) · "+g.goalText(me), mx, my-22, cGold, 13, false, alignLeft)
 		g.drawMap(dst, me, mx, my, mw, mh, src, true)
+		g.bigMapClick(mx, my, mw, mh, src) // clicar: caminhar até lá (pesca.go)
 	}
 
 	// Barra de ações: golpe básico e os cinco atalhos (webtree.go).
@@ -288,7 +290,7 @@ func (g *Game) drawHUD(dst *ebiten.Image, me *proto.Player) {
 			{"Movimento", []key{{"WASD", "mover"}, {"Shift", "correr"}, {"X", "montar e descer"}}},
 			{"Combate", []key{{"ESP", "golpe básico (ou clique)"}, {"1–9", "atalhos da barra (abrem com o nível)"}, {"F · R", "atalhos 1 e 2"},
 				{"Direito", "atalho 1"}, {"Q", "beber poção"}}},
-			{"Mundo", []key{{"E", "interagir · descansar · tocar runas"}, {"V", "viagem rápida (fogueira ou placa)"}, {"Z", "acender/apagar a luz"}, {"Enter", "falar"}}},
+			{"Mundo", []key{{"E", "interagir · descansar · tocar runas"}, {"V", "viagem rápida (fogueira ou placa)"}, {"Z", "acender/apagar a luz"}, {"G", "pescar (com a vara)"}, {"B", "modo: pacifista · defensivo · agressivo"}, {"Enter", "falar"}}},
 			{"Janelas", []key{{"I", "personagem e mochila"}, {"K", "teia de habilidades"}, {"J", "conquistas"},
 				{"M", "mapa"}, {"N", "diário (missões e história)"}, {"L", "registro"}, {"O", "opções"}, {"P · Esc", "pausa"}, {"F5", "salvar"}, {"H", "fecha esta ajuda"}}},
 		}

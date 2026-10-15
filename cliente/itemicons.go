@@ -336,8 +336,12 @@ func itemArtKey(it proto.Item) string {
 			return "lantern"
 		case strings.HasPrefix(it.Name, "Tocha"):
 			return "torch"
+		case strings.HasPrefix(it.Name, "Vara"):
+			return "rod"
 		}
 		return "axe"
+	case proto.KindFish:
+		return "fish"
 	}
 	return "star"
 }
@@ -429,6 +433,8 @@ var achIcons = []struct {
 	{"shield", col{150, 170, 200}},  // Veterano
 	{"crown", col{240, 200, 90}},    // Mestre
 	{"trophy", col{255, 215, 90}},   // Herói
+	{"fish", col{90, 160, 230}},     // Todas as Águas
+	{"fish", col{255, 200, 70}},     // Mestre Pescador
 }
 
 // drawAchievements é o painel de conquistas (J): uma grade de cartões com o

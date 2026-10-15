@@ -245,58 +245,64 @@ func (wd *World) openChests(p *Player, now time.Time) {
 
 // saveData é o que vai para o disco de cada personagem.
 type saveData struct {
-	Token     string // hash do segredo que o cliente guarda
-	Class     int
-	Level     int
-	XP        int
-	Gold      int
-	Points    int
-	SkillPts  int
-	Attr      [numAttrs]int
-	Tree      [numOldTree]int // árvore antiga: só lida, para devolver os pontos
-	Inv       []invSlot
-	Equip     int
-	Skin      int
-	Quest     int
-	QProg     int
-	QStep     int
-	Unlocked  bool
-	Kills     int
-	Chests    int
-	Bosses    uint
-	Seen      uint
-	Ach       uint
-	Helm      int
-	Boots     int
-	Amulet    int
-	Steeds    uint
-	LastSteed int
-	QuestVer  int // 1 = corrente em capítulos; 0 = save antigo
-	SideProg  [numSide]int
-	SideDone  uint
-	Bonfire   int
-	Tokens    []string // segredos de todos os aparelhos que já abriram este personagem
-	Password  string   // hash da senha opcional; abre o personagem em qualquer aparelho
-	Moored    bool     // barco atracado: onde ficou
-	MoorX     int
-	MoorY     int
-	Fog       string // explorado (explore.go)
-	Web       []int  // graus de cada nó da teia de habilidades
-	Bar       []int  // golpes nos atalhos 1 a 5 (-1 vazio)
-	Slain     uint64 // chefes já derrubados, por tipo
-	Bag       int    // espaços comprados na mochila
-	Found     uint64 // pontos de viagem descobertos
-	Tech      int    // técnicas do Mestre Oren (bits)
-	Gates     uint32 // Portões Rúnicos acesos (bits)
-	Prologue  *int   // etapa do prólogo; ausente = save de antes do prólogo (concluído)
-	SkillVer  int    // 1 = teia de habilidades; 0 = save da árvore antiga
-	HasPos    bool   // o lugar onde ele estava (saves antigos não têm)
-	PosX      int
-	PosY      int
-	LightSlot int       // lanterna ou tocha no espaço de luz
-	House     int       // casa comprada + 1
-	Stash     []invSlot // baú da casa
-	StashGold int
+	Token      string // hash do segredo que o cliente guarda
+	Class      int
+	Level      int
+	XP         int
+	Gold       int
+	Points     int
+	SkillPts   int
+	Attr       [numAttrs]int
+	Tree       [numOldTree]int // árvore antiga: só lida, para devolver os pontos
+	Inv        []invSlot
+	Equip      int
+	Skin       int
+	Quest      int
+	QProg      int
+	QStep      int
+	Unlocked   bool
+	Kills      int
+	Chests     int
+	Bosses     uint
+	Seen       uint
+	Ach        uint
+	Helm       int
+	Boots      int
+	Amulet     int
+	Steeds     uint
+	LastSteed  int
+	QuestVer   int // 1 = corrente em capítulos; 0 = save antigo
+	SideProg   [numSide]int
+	SideDone   uint
+	Bonfire    int
+	Tokens     []string // segredos de todos os aparelhos que já abriram este personagem
+	Password   string   // hash da senha opcional; abre o personagem em qualquer aparelho
+	Moored     bool     // barco atracado: onde ficou
+	MoorX      int
+	MoorY      int
+	Fog        string // explorado (explore.go)
+	Web        []int  // graus de cada nó da teia de habilidades
+	Bar        []int  // golpes nos atalhos 1 a 5 (-1 vazio)
+	Slain      uint64 // chefes já derrubados, por tipo
+	Bag        int    // espaços comprados na mochila
+	Found      uint64 // pontos de viagem descobertos
+	Tech       int    // técnicas do Mestre Oren (bits)
+	Gates      uint32 // Portões Rúnicos acesos (bits)
+	Prologue   *int   // etapa do prólogo; ausente = save de antes do prólogo (concluído)
+	SkillVer   int    // 1 = teia de habilidades; 0 = save da árvore antiga
+	HasPos     bool   // o lugar onde ele estava (saves antigos não têm)
+	PosX       int
+	PosY       int
+	LightSlot  int       // lanterna ou tocha no espaço de luz
+	House      int       // casa comprada + 1
+	Stash      []invSlot // baú da casa
+	StashGold  int
+	FishKinds  uint64 // pesca: peixes pegos
+	FishBodies uint32 // pesca: águas
+	BestSeen   uint64 // bestiário
+	SteedSeen  uint32
+	BestKills  []int
+	Mode       int // modo de combate
 }
 
 func hashToken(token string) string {
@@ -315,7 +321,7 @@ func (wd *World) persist(p *Player) {
 	}
 	b, err := json.MarshalIndent(saveData{p.token, p.Class, p.Level, p.XP, p.Gold, p.Points, p.SkillPts, p.Attr, [numOldTree]int{},
 		p.inv, p.Equip, p.Skin, p.Quest, p.QProg, p.QStep, p.Unlocked, p.Kills, p.Chests, p.Bosses, p.Seen, p.Ach, p.Helm, p.Boots, p.Amulet,
-		p.Steeds, p.LastSteed, 1, p.SideProg, p.SideDone, p.Bonfire, p.tokens, p.password, p.Moored, p.MoorX, p.MoorY, packFog(p.fog), p.Web, p.Bar[:], p.Slain, p.Bag, p.Found, p.Tech, p.Gates, &p.Intro, 1, true, p.X, p.Y, p.LightSlot, p.House, p.Stash, p.StashGold}, "", "\t")
+		p.Steeds, p.LastSteed, 1, p.SideProg, p.SideDone, p.Bonfire, p.tokens, p.password, p.Moored, p.MoorX, p.MoorY, packFog(p.fog), p.Web, p.Bar[:], p.Slain, p.Bag, p.Found, p.Tech, p.Gates, &p.Intro, 1, true, p.X, p.Y, p.LightSlot, p.House, p.Stash, p.StashGold, p.FishKinds, p.FishBodies, p.BestSeen, p.SteedSeen, p.BestKills, p.Mode}, "", "\t")
 	if err != nil || os.MkdirAll(wd.saveDir, 0o755) != nil {
 		return
 	}
@@ -494,6 +500,9 @@ func (p *Player) apply(sv saveData) {
 		}
 	}
 	p.StashGold = max(0, sv.StashGold)
+	p.FishKinds, p.FishBodies, p.BestSeen, p.SteedSeen = sv.FishKinds, sv.FishBodies, sv.BestSeen, sv.SteedSeen
+	p.BestKills = append([]int(nil), sv.BestKills...)
+	p.Mode = clampInt(sv.Mode, 0, numModes-1)
 	if sv.LightSlot == itemLantern || sv.LightSlot == itemTorch {
 		p.LightSlot = sv.LightSlot
 	}

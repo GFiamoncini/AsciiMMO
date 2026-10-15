@@ -150,6 +150,8 @@ func (g *Game) sellPrice(s proto.Shop, id int) int {
 		return 100
 	case proto.KindMoney:
 		return 0
+	case proto.KindFish:
+		return it.Price
 	}
 	return []int{30, 90, 200, 400}[clampi(it.Rarity, 0, 3)]
 }

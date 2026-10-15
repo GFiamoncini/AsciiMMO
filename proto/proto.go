@@ -28,47 +28,53 @@ type Portal struct {
 }
 
 type Init struct {
-	Init     bool        `json:"init"`
-	ID       int         `json:"id"`
-	W        int         `json:"w"`
-	H        int         `json:"h"`
-	Class    string      `json:"class"`
-	Skills   []Skill     `json:"skills"`
-	Lights   [][4]int    `json:"lights"` // x, y, raio, tipo; a primeira é a fogueira
-	Portals  []Portal    `json:"portals"`
-	OverH    int         `json:"overH"` // abaixo disso é a cripta
-	Items    []Item      `json:"items"`
-	Regions  []Region    `json:"regions"`
-	Attrs    [][2]string `json:"attrs"`            // nome e efeito de cada atributo
-	Tree     []Node      `json:"tree"`             // nós da árvore de habilidades
-	Achs     [][2]string `json:"achs"`             // nome e descrição de cada conquista
-	Chests   [][2]int    `json:"chests"`           // posição dos baús
-	Docks    [][2]int    `json:"docks"`            // ponta de cada cais
-	Zones    []Zone      `json:"zones"`            // áreas do subsolo, para o minimapa
-	SteedK   []SteedK    `json:"steedk"`           // tipos de montaria
-	HerbK    []int       `json:"herbk"`            // item que cada tipo de erva dá
-	Status   []string    `json:"status"`           // nome de cada status negativo
-	Raft     int         `json:"raft"`             // madeira para uma jangada
-	Currency string      `json:"cur"`              // nome do dinheiro do jogo
-	Shops    []Shop      `json:"shops"`            // mercadores
-	Bonfires []Bonfire   `json:"bonfires"`         // fogueiras onde se renasce
-	Chapters [][2]string `json:"chapters"`         // título e abertura de cada capítulo
-	Sides    []SideDef   `json:"sides"`            // missões secundárias
-	Quests   []SideDef   `json:"quests,omitempty"` // missões principais em ordem (diário)
-	Houses   []HouseLot  `json:"houses,omitempty"` // casas à venda (porta e preço)
-	Fog      string      `json:"fog,omitempty"`    // explorado, em bits na escala do minimapa, gzip + base64
-	Doors    [][2]int    `json:"doors"`            // portas de cofre (centro da base)
-	Travel   []TravelPt  `json:"travel"`           // pontos de viagem rápida
-	Seals    []Seal      `json:"seals"`            // portas seladas com pista
-	NPCs     []NPC       `json:"npcs"`             // gente com quem conversar
-	Techs    []Tech      `json:"techs"`            // técnicas do Mestre Oren
-	Gates    []Gate      `json:"gates"`            // Portões Rúnicos
-	Reads    []Read      `json:"reads"`            // o que se lê com E
-	Book     []Skill     `json:"book"`             // todos os golpes da classe (Skills tem só os 3 antigos, para o navegador)
-	Web      []WebNode   `json:"web"`              // teia de habilidades
-	Branches []Branch    `json:"branches"`         // ramos da teia
-	MainAttr int         `json:"mattr"`            // atributo da classe (a teia pede pontos nele)
-	Elems    []string    `json:"elems"`            // nome de cada elemento
+	Init      bool        `json:"init"`
+	ID        int         `json:"id"`
+	W         int         `json:"w"`
+	H         int         `json:"h"`
+	Class     string      `json:"class"`
+	Skills    []Skill     `json:"skills"`
+	Lights    [][4]int    `json:"lights"` // x, y, raio, tipo; a primeira é a fogueira
+	Portals   []Portal    `json:"portals"`
+	OverH     int         `json:"overH"` // abaixo disso é a cripta
+	Items     []Item      `json:"items"`
+	Regions   []Region    `json:"regions"`
+	Attrs     [][2]string `json:"attrs"`               // nome e efeito de cada atributo
+	Tree      []Node      `json:"tree"`                // nós da árvore de habilidades
+	Achs      [][2]string `json:"achs"`                // nome e descrição de cada conquista
+	Chests    [][2]int    `json:"chests"`              // posição dos baús
+	Docks     [][2]int    `json:"docks"`               // ponta de cada cais
+	Zones     []Zone      `json:"zones"`               // áreas do subsolo, para o minimapa
+	SteedK    []SteedK    `json:"steedk"`              // tipos de montaria
+	HerbK     []int       `json:"herbk"`               // item que cada tipo de erva dá
+	Status    []string    `json:"status"`              // nome de cada status negativo
+	Raft      int         `json:"raft"`                // madeira para uma jangada
+	Currency  string      `json:"cur"`                 // nome do dinheiro do jogo
+	Shops     []Shop      `json:"shops"`               // mercadores
+	Bonfires  []Bonfire   `json:"bonfires"`            // fogueiras onde se renasce
+	Chapters  [][2]string `json:"chapters"`            // título e abertura de cada capítulo
+	Sides     []SideDef   `json:"sides"`               // missões secundárias
+	Quests    []SideDef   `json:"quests,omitempty"`    // missões principais em ordem (diário)
+	Houses    []HouseLot  `json:"houses,omitempty"`    // casas à venda (porta e preço)
+	Beasts    []Beast     `json:"beasts,omitempty"`    // bestiário: um por tipo de inimigo, na ordem do servidor
+	SteedLore []string    `json:"steedlore,omitempty"` // bestiário: montarias
+	Waters    []string    `json:"waters,omitempty"`    // águas de pesca, na ordem dos bits
+	Fishes    []string    `json:"fishes,omitempty"`    // onde e quando cada peixe aparece
+	Fish0     int         `json:"fish0,omitempty"`     // id do primeiro peixe (os outros seguem)
+	Modes     []string    `json:"modes,omitempty"`     // nomes dos modos de combate
+	Fog       string      `json:"fog,omitempty"`       // explorado, em bits na escala do minimapa, gzip + base64
+	Doors     [][2]int    `json:"doors"`               // portas de cofre (centro da base)
+	Travel    []TravelPt  `json:"travel"`              // pontos de viagem rápida
+	Seals     []Seal      `json:"seals"`               // portas seladas com pista
+	NPCs      []NPC       `json:"npcs"`                // gente com quem conversar
+	Techs     []Tech      `json:"techs"`               // técnicas do Mestre Oren
+	Gates     []Gate      `json:"gates"`               // Portões Rúnicos
+	Reads     []Read      `json:"reads"`               // o que se lê com E
+	Book      []Skill     `json:"book"`                // todos os golpes da classe (Skills tem só os 3 antigos, para o navegador)
+	Web       []WebNode   `json:"web"`                 // teia de habilidades
+	Branches  []Branch    `json:"branches"`            // ramos da teia
+	MainAttr  int         `json:"mattr"`               // atributo da classe (a teia pede pontos nele)
+	Elems     []string    `json:"elems"`               // nome de cada elemento
 	Affinity
 }
 
@@ -123,6 +129,7 @@ type Item struct {
 	WType  int    `json:"wt"` // tipo da arma; -1 se não for arma
 	Color  int    `json:"color"`
 	Desc   string `json:"desc"`
+	Price  int    `json:"price,omitempty"` // peixe: quanto o mercador paga
 }
 
 type Region struct {
@@ -273,27 +280,56 @@ type State struct {
 	MV     int                `json:"mv"`           // versão do mapa depois dessas mudanças
 	Reload bool               `json:"reload,omitempty"`
 
-	Chapter   int      `json:"chap"`             // capítulo atual (1..6; 7 depois do fim)
-	SideDone  uint     `json:"sdone"`            // bits das secundárias concluídas
-	SideProg  []int    `json:"sprog"`            // progresso de cada secundária
-	Bonfire   int      `json:"bf"`               // última fogueira acesa
-	Purged    []int    `json:"purged,omitempty"` // fogueiras com a área purificada agora
-	Event     int      `json:"ev,omitempty"`     // 1 = invasão noturna em curso
-	Pops      []Pop    `json:"pops"`
-	Moor      *[2]int  `json:"moor,omitempty"`  // onde ficou o seu barco atracado
-	Marks     []Mark   `json:"marks,omitempty"` // onde fazer as missões em aberto
-	BagCap    int      `json:"bag"`             // espaços da mochila
-	Found     uint64   `json:"found"`           // pontos de viagem descobertos
-	Tech      int      `json:"tech,omitempty"`  // técnicas do Mestre aprendidas (bits)
-	Gates     uint32   `json:"gates,omitempty"` // Portões Rúnicos acesos (bits)
-	Paused    bool     `json:"pz,omitempty"`    // você está pausado
-	Frozen    bool     `json:"frz,omitempty"`   // o mundo parou (todos pausados)
-	Saves     int      `json:"sv,omitempty"`    // vezes que o personagem foi gravado (muda = "salvo")
-	LightSlot int      `json:"lslot,omitempty"` // lanterna ou tocha no espaço de luz
-	Tame      *Tame    `json:"tame,omitempty"`  // doma em andamento: a sequência a tocar
-	House     int      `json:"house,omitempty"` // casa comprada + 1
-	Stash     [][2]int `json:"stash,omitempty"` // baú da casa: item, quantidade
-	StashGold int      `json:"stashg,omitempty"`
+	Chapter    int       `json:"chap"`             // capítulo atual (1..6; 7 depois do fim)
+	SideDone   uint      `json:"sdone"`            // bits das secundárias concluídas
+	SideProg   []int     `json:"sprog"`            // progresso de cada secundária
+	Bonfire    int       `json:"bf"`               // última fogueira acesa
+	Purged     []int     `json:"purged,omitempty"` // fogueiras com a área purificada agora
+	Event      int       `json:"ev,omitempty"`     // 1 = invasão noturna em curso
+	Pops       []Pop     `json:"pops"`
+	Moor       *[2]int   `json:"moor,omitempty"`  // onde ficou o seu barco atracado
+	Marks      []Mark    `json:"marks,omitempty"` // onde fazer as missões em aberto
+	BagCap     int       `json:"bag"`             // espaços da mochila
+	Found      uint64    `json:"found"`           // pontos de viagem descobertos
+	Tech       int       `json:"tech,omitempty"`  // técnicas do Mestre aprendidas (bits)
+	Gates      uint32    `json:"gates,omitempty"` // Portões Rúnicos acesos (bits)
+	Paused     bool      `json:"pz,omitempty"`    // você está pausado
+	Frozen     bool      `json:"frz,omitempty"`   // o mundo parou (todos pausados)
+	Saves      int       `json:"sv,omitempty"`    // vezes que o personagem foi gravado (muda = "salvo")
+	LightSlot  int       `json:"lslot,omitempty"` // lanterna ou tocha no espaço de luz
+	Tame       *Tame     `json:"tame,omitempty"`  // doma em andamento: a sequência a tocar
+	House      int       `json:"house,omitempty"` // casa comprada + 1
+	Stash      [][2]int  `json:"stash,omitempty"` // baú da casa: item, quantidade
+	StashGold  int       `json:"stashg,omitempty"`
+	Mode       int       `json:"mode,omitempty"`   // modo de combate: 0 pacifista, 1 defensivo, 2 agressivo
+	Goal       *[2]int   `json:"goal,omitempty"`   // caminhando até este ponto
+	Fish       *FishLine `json:"fish,omitempty"`   // linha de pesca na água
+	FishKinds  uint64    `json:"fishk,omitempty"`  // peixes já pegos (bits)
+	FishBodies uint32    `json:"fishb,omitempty"`  // águas onde já pescou (bits)
+	BestSeen   uint64    `json:"bseen,omitempty"`  // bestiário: inimigos vistos (bits)
+	SteedSeen  uint32    `json:"sseen,omitempty"`  // montarias vistas (bits)
+	BestKills  []int     `json:"bkills,omitempty"` // mortes por tipo de inimigo
+}
+
+// Beast é uma criatura do bestiário.
+type Beast struct {
+	Name   string   `json:"name"`
+	Lv     int      `json:"lv"`
+	HP     int      `json:"hp"`
+	Dmg    int      `json:"dmg"`
+	DmgSp  int      `json:"dsp"`
+	Boss   bool     `json:"boss,omitempty"`
+	Lore   string   `json:"lore"`
+	Weak   []string `json:"weak,omitempty"`
+	Resist []string `json:"resist,omitempty"`
+}
+
+// FishLine é a linha de pesca: onde está a boia e se o peixe está mordendo.
+type FishLine struct {
+	X     int  `json:"x"`
+	Y     int  `json:"y"`
+	Bite  bool `json:"bite,omitempty"`
+	Water int  `json:"w"`
 }
 
 // HouseLot é uma casa à venda: nome, frente da porta e preço.

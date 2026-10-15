@@ -159,7 +159,7 @@ func (g *Game) drawMiniLeft(dst *ebiten.Image, me *proto.Player, x, y, w float64
 		g.initFog()
 	}
 	g.reveal(me, g.now())
-	g.uiRects = append(g.uiRects, uiRect{x: x, y: y, w: w, h: hh, fn: func() {
+	g.uiRects = append(g.uiRects, uiRect{x: x, y: y, w: w * btoF(!g.bigMap), h: hh, fn: func() { // com o mapa grande aberto, o clique é dele
 		g.mapShut = !g.mapShut
 		v := "0"
 		if g.mapShut {
@@ -300,4 +300,11 @@ func (g *Game) tooltipAt(dst *ebiten.Image, s string, x, y float64) {
 	g.rect(dst, x-4, y-2, tw+10, 18, color.RGBA{10, 8, 14, 235})
 	g.stroke(dst, x-4, y-2, tw+10, 18, rgbaHex(0x8a7040), 1)
 	g.txt(dst, s, x+1, y, cText, 12, false, alignLeft)
+}
+
+func btoF(b bool) float64 {
+	if b {
+		return 1
+	}
+	return 0
 }

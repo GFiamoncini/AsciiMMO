@@ -74,6 +74,9 @@ func main() {
 	if strings.HasPrefix(*panel, "abertura") { // abertura0..2: uma tela da abertura, já com texto
 		g.openPanel, g.introPage, g.introAt, g.introDone = "", int((*panel)[len(*panel)-1]-'0'), 4, true
 	}
+	if strings.HasPrefix(*panel, "diario-") { // diario-quests, -story, -beasts, -fish
+		g.openPanel, g.journalTab = "diario", strings.TrimPrefix(*panel, "diario-")
+	}
 	if *panel == "pausa" {
 		g.openPanel, g.pauseMenu = "", true
 	}

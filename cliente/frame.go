@@ -495,6 +495,8 @@ func (g *Game) frame(screen *ebiten.Image) {
 			g.drawExit(p, cur.Tod, T)
 		}
 	}
+	g.drawFishLine(me, T) // boia de pesca (pesca.go)
+	g.drawGoal(T)         // destino escolhido no mapa
 	var ents []ent
 	for i := range cur.Mobs {
 		e := &cur.Mobs[i]

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"math"
+	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -23,7 +24,7 @@ func (g *Game) drawJournal(dst *ebiten.Image, cw, chh float64) {
 	}
 	g.txt(dst, "-=< Diário >=-", x+w/2, y+10, cGold, 16, true, alignCenter)
 	g.txt(dst, "N fecha", x+w-14, y+12, cDimmer, 11, false, alignRight)
-	tabs := []struct{ key, label string }{{"quests", "Missões"}, {"story", "História"}}
+	tabs := []struct{ key, label string }{{"quests", "Missões"}, {"story", "História"}, {"beasts", "Bestiário"}, {"fish", "Pesca"}}
 	if g.journalTab == "" {
 		g.journalTab = "quests"
 	}
@@ -126,6 +127,104 @@ func (g *Game) drawJournal(dst *ebiten.Image, cw, chh float64) {
 		}
 		if !any {
 			line("Nenhuma ainda.", cDimmer, 12, 18)
+		}
+	case "beasts":
+		seen := 0
+		for k := range g.info.Beasts {
+			if k < 64 && g.cur.BestSeen&(1<<k) != 0 {
+				seen++
+			}
+		}
+		line(fmt.Sprintf("Criaturas de Midrath — %d de %d registradas", seen, len(g.info.Beasts)), cGold, 14, 0)
+		unseen := 0
+		cy += 4
+		for k, b := range g.info.Beasts {
+			if b.Lv == 0 && b.HP <= 1 {
+				continue
+			}
+			kills := 0
+			if k < len(g.cur.BestKills) {
+				kills = g.cur.BestKills[k]
+			}
+			if k >= 64 || g.cur.BestSeen&(1<<k) == 0 {
+				unseen++
+				continue
+			}
+			name := b.Name
+			if b.Boss {
+				name += "  (chefe)"
+			}
+			line(fmt.Sprintf("%s · nível %d · vida %d · dano %d–%d · derrotados: %d", name, b.Lv, b.HP, b.Dmg, b.Dmg+b.DmgSp, kills), pickC(b.Boss, rgbaHex(0xff9070), cText), 13, 18)
+			line(b.Lore, cDim, 12, 30)
+			if len(b.Weak) > 0 || len(b.Resist) > 0 {
+				ws := ""
+				if len(b.Weak) > 0 {
+					ws = "fraco a " + strings.Join(b.Weak, ", ")
+				}
+				if len(b.Resist) > 0 {
+					if ws != "" {
+						ws += " · "
+					}
+					ws += "resiste a " + strings.Join(b.Resist, ", ")
+				}
+				line(ws, rgbaHex(0xe0c060), 12, 30)
+			}
+			cy += 4
+		}
+		if unseen > 0 {
+			line(fmt.Sprintf("+ %d criaturas ainda não vistas: chegue perto delas para registrar", unseen), cDimmer, 12, 18)
+		}
+		cy += 6
+		line("Montarias", cGold, 14, 0)
+		for k, sk := range g.info.SteedK {
+			tamed := g.cur.Owned&(1<<k) != 0
+			if !tamed && g.cur.SteedSeen&(1<<k) == 0 {
+				line("??? — ainda não visto", cDimmer, 12, 18)
+				continue
+			}
+			st := "visto"
+			if tamed {
+				st = "domado"
+			}
+			line(fmt.Sprintf("%s · doma no nível %d · %s", sk.Name, sk.Level, st), cText, 13, 18)
+			if k < len(g.info.SteedLore) {
+				line(g.info.SteedLore[k], cDim, 12, 30)
+			}
+		}
+	case "fish":
+		nf := 0
+		for k := range g.info.Fishes {
+			if g.cur.FishKinds&(1<<k) != 0 {
+				nf++
+			}
+		}
+		line(fmt.Sprintf("Registro de pesca — %d de %d peixes (G pesca, com a vara)", nf, len(g.info.Fishes)), cGold, 14, 0)
+		cy += 4
+		line("Águas", rgbaHex(0x80b0e0), 13, 0)
+		for k, w := range g.info.Waters {
+			if g.cur.FishBodies&(1<<k) != 0 {
+				if cy >= top-2 && cy < bottom-14 {
+					g.checkMark(dst, x+24, cy+2, 10, true)
+				}
+				line(w, cDim, 12, 18)
+			} else {
+				line("· "+w, cText, 12, 18)
+			}
+		}
+		cy += 6
+		line("Peixes", rgbaHex(0x80b0e0), 13, 0)
+		for k, desc := range g.info.Fishes {
+			id := g.info.Fish0 + k
+			if id < 0 || id >= len(g.info.Items) {
+				continue
+			}
+			it := g.info.Items[id]
+			if g.cur.FishKinds&(1<<k) != 0 {
+				line(fmt.Sprintf("%s · vale %d", it.Name, it.Price), rarCols[clampi(it.Rarity, 0, 3)], 13, 18)
+				line(desc, cDim, 12, 30)
+			} else {
+				line("??? — "+desc, cDimmer, 12, 18)
+			}
 		}
 	case "story":
 		line("A abertura: Cinzalva ardendo, Tiamath desperta, o vale de cinzas.", cText, 13, 0)

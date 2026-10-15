@@ -93,6 +93,14 @@ type Player struct {
 	Light      int       // luz acesa: 0 nada, 1 tocha, 2 lanterna (tools.go)
 	LightSlot  int       // lanterna ou tocha equipada no espaço de luz (luz.go)
 	House      int       // casa comprada + 1 (casa.go)
+	fish       *fishTry  // linha na água (pesca.go)
+	FishKinds  uint64    // peixes já pegos (bits, ordem de fishes)
+	FishBodies uint32    // águas onde já pescou (bits)
+	BestSeen   uint64    // bestiário: tipos de inimigo já vistos (bits)
+	SteedSeen  uint32    // montarias já vistas (bits)
+	BestKills  []int     // bestiário: mortes por tipo de inimigo
+	Mode       int       // modo de combate (modo.go)
+	goal       *goal     // caminhando até um ponto do mapa
 	Stash      []invSlot // baú da casa
 	StashGold  int       // dinheiro no baú
 	autoLit    bool      // a luz acesa foi acesa sozinha ao descer
@@ -234,6 +242,8 @@ type Snapshot struct {
 // World é o estado autoritativo do jogo. O terreno não muda depois de
 // gerado, então pode ser lido sem lock; o resto passa pelo mutex.
 type World struct {
+	seed       uint32       // semente do mapa (pesca.go precisa do ruído do lago e do rio)
+	ponds      []pond       // lagoas cavadas (pesca.go)
 	pathBudget int          // buscas de caminho que ainda cabem neste passo (caminho.go)
 	pausedNs   atomic.Int64 // tempo em que o mundo ficou parado (pausa.go)
 	w, h       int
@@ -405,6 +415,13 @@ func (wd *World) step(now time.Time) {
 		if wd.ticks%tickRate == 0 {
 			p.HP, p.MP = min(p.MaxHP, p.HP+2), min(p.MaxMP, p.MP+2+p.bon.MPRegen)
 		}
+		wd.driveGoal(p, now) // caminhando até um ponto do mapa (modo.go)
+		if wd.ticks%8 == p.ID%8 {
+			wd.autoFight(p, now) // modo defensivo/agressivo
+		}
+		if wd.ticks%(2*tickRate) == p.ID%(2*tickRate) {
+			wd.seeBeasts(p, now) // bestiário
+		}
 		moving := p.moveX != 0 || p.moveY != 0
 		running := moving && p.sprint && p.ST >= sprintCost
 		if running {
@@ -451,6 +468,7 @@ func (wd *World) step(now time.Time) {
 			wd.stepLight(p, now) // tocha queima e a chuva apaga (antes nunca era chamado)
 			wd.autoLight(p, now)
 			wd.tameExpire(p, now)
+			wd.stepFish(p, now)
 		}
 		if wd.ticks%(30*tickRate) == 0 {
 			wd.persist(p)
@@ -763,6 +781,12 @@ func (wd *World) SetInput(id, dx, dy int, sprint bool) {
 	wd.mu.Lock()
 	defer wd.mu.Unlock()
 	if p, ok := wd.players[id]; ok && !p.paused {
+		if dx != 0 || dy != 0 {
+			p.goal = nil // andar com as teclas cancela o caminho até o ponto
+		} else if p.goal != nil {
+			p.sprint = sprint
+			return // parado no teclado: o caminho continua conduzindo
+		}
 		p.moveX, p.moveY, p.sprint = max(-1, min(1, dx)), max(-1, min(1, dy)), sprint
 	}
 }
@@ -839,6 +863,15 @@ func (wd *World) Snapshot(id int) Snapshot {
 			s.Me = *p
 			s.Me.inv = append([]invSlot(nil), p.inv...)
 			s.Me.Stash = append([]invSlot(nil), p.Stash...)
+			s.Me.BestKills = append([]int(nil), p.BestKills...)
+			if p.goal != nil {
+				g := *p.goal
+				s.Me.goal = &g
+			}
+			if p.fish != nil {
+				f := *p.fish
+				s.Me.fish = &f
+			}
 			s.Me.chestDay = maps.Clone(p.chestDay)
 			s.Me.pops = append([]pop(nil), p.pops...)
 		}

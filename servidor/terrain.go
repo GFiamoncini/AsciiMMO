@@ -59,6 +59,7 @@ func (wd *World) sea(x, y int, seed uint32) {
 // generate preenche caractere, cor e colisão de cada célula.
 func (wd *World) generate(seed uint32) {
 	n := wd.w * wd.h
+	wd.seed = seed
 	wd.glyph, wd.color = make([]byte, n), make([]rgb, n)
 	wd.solid, wd.over, wd.water = make([]bool, n), make([]bool, n), make([]bool, n)
 	wd.marsh = make([]byte, n)
@@ -134,6 +135,7 @@ func (wd *World) generate(seed uint32) {
 		{cryptOutX, cryptOutY, chapelX, chapelY + 14, false, "Saída", false},
 	}
 	wd.genDeep(seed)
+	wd.buildPonds(seed) // lagoas novas, antes das rochas e bichos (pesca.go)
 	wd.landscape(seed)
 	wd.settleProps()
 	wd.camps()

@@ -20,6 +20,7 @@ const (
 	KindBag      // ampliação da mochila: Bonus é quantos espaços soma
 	KindTool     // ferramenta de ambiente: lanterna, tocha, machado
 	KindRing     // anel (ainda não existe no jogo; o cliente já tem o ícone)
+	KindFish     // peixe pescado: vende-se (Item.Price) e conta no registro de pesca
 )
 
 // Efeitos (Fx.Kind).

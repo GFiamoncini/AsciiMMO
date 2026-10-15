@@ -108,6 +108,7 @@ type Game struct {
 	chatPos                     int       // posição em chatSent enquanto se navega (len = linha nova)
 	logScroll                   int       // linhas roladas para trás no registro (L)
 	pauseMenu                   bool      // menu de pausa aberto (pausa.go)
+	fishBit                     bool      // o peixe estava mordendo no quadro passado
 	scene                       *sceneBuf // grade da cena da abertura (abertura_cena.go)
 	sceneG                      *gpu
 	thunderAt                   float64
@@ -638,6 +639,11 @@ func (g *Game) updateInput() {
 		return
 	}
 	g.sendDir()
+	// Pesca: com a linha na água, G, E ou Espaço puxam.
+	if g.cur != nil && g.cur.Fish != nil && (justKey(ebiten.KeyG) || justKey(ebiten.KeyE) || justKey(ebiten.KeySpace)) {
+		g.send(proto.In{T: "fish"})
+		return
+	}
 	// Com a loja aberta, as teclas são dela (loja.go); o mouse segue abaixo.
 	if !g.updateShopKeys() && !g.updateBonfireKeys() {
 		if ebiten.IsKeyPressed(ebiten.KeySpace) && g.now()-g.spaceAt > 100 {
@@ -675,6 +681,10 @@ func (g *Game) updateInput() {
 			g.pauseMenu = true
 		case just(ebiten.KeyF5):
 			g.saveNow()
+		case just(ebiten.KeyB):
+			g.cycleMode()
+		case just(ebiten.KeyG):
+			g.send(proto.In{T: "fish"}) // lançar a linha (pesca.go)
 		case just(ebiten.KeyN):
 			g.togglePanel("diario")
 		case just(ebiten.KeyZ):

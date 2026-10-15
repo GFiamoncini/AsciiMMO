@@ -516,6 +516,24 @@ temporária da sessão (yt-dlp.exe do GitHub, ffmpeg-release-essentials do gyan.
   compra; depois abre o baú (itens e dinheiro, no save: `House`, `Stash`, `StashGold`). Cada jogador tem a sua.
   TestCasa. Atenção: o item 0 é a Poção de Vida (filtros de id usam `>= 0`).
 
+## Pesca, bestiário, modo e caminho (14/10/2026, noite)
+
+- **Pesca** (`servidor/pesca.go`, cliente `pesca.go`): Vara de Pesca (Ysolde, Velha, Eremita, 120). **G** lança a
+  linha (fora do E por causa da jangada); a boia cai a ~10 células, fora do corpo; mordida 2–7 s depois, janela de
+  0,9 s; G/E/Espaço puxam. 7 águas (`waterNames`: mar, Lago Espelhado, rio, 4 lagoas novas — `pondsBase`, cavadas em
+  `buildPonds` antes da `landscape`, procurando lugar livre) e 18 peixes (`fishes`: água, estação, hora, peso, preço).
+  Itens novos são acrescentados no `init` (`itemFishRod`, `itemFish0` + i; `KindFish`, `Item.Price`). Conquistas
+  "Todas as Águas" e "Mestre Pescador" (bits `FishBodies`, `FishKinds`). TestPesca.
+- **Bestiário** (`servidor/bestiario.go`): verbete de cada inimigo (`bestiary`: história, fraquezas, resistências) e
+  das montarias (`steedLore`). Fraqueza = 150% do dano ("FRACO"), resistência = 60%. Registro: `BestSeen` (perto de
+  50 células, a cada 2 s), `SteedSeen`, `BestKills` (em `mobDied`). Diário (N) com abas Bestiário e Pesca. TestBestiario.
+- **Modo de combate** (`servidor/modo.go`, tecla **B**, ícone ao lado do card): pacifista / defensivo (revida 4 s
+  depois de ferido) / agressivo (golpe básico sozinho no mais perto ao alcance, `basicReach`). `wd.use` é o golpe
+  sem lock.
+- **Caminhar até um ponto**: clique no mapa grande (M) → msg `goto` (I=x, Slot=y); `coarsePath` (A* de 4 em 4 com
+  `fits`, até 150 mil nós) e `driveGoal` conduz; tecla de andar cancela, Esc cancela (`nogoto`), preso refaz uma vez.
+  Destino no mapa, no mundo (bandeira) e na bússola. TestModoECaminho.
+
 ## Fila (próximas rodadas)
 
 - **Faixa dos Planos** (pedido "aumentar o mapa"): terceira faixa abaixo das Profundezas (parte 2 do mapa, baixada à
@@ -529,11 +547,7 @@ temporária da sessão (yt-dlp.exe do GitHub, ffmpeg-release-essentials do gyan.
 
 ## Fila "para depois"
 
-- **Pedido em 14/10 (noite), para depois**: marcar um ponto no mapa e o personagem andar até lá; modo do
-  personagem (agressivo: ataca o que achar no caminho / pacifista), com ícones; lagos e lagoas novos e **pesca**
-  (peixes por estação e horário, vender peixe, conquista por pescar em todos os lagos/rios/lagoas e por pegar todos
-  os peixes); **bestiário** (cada bicho morto, visto ou domado entra, com histórico curto, fraquezas e dano).
-
+- (O pedido "andar até ponto do mapa, modo, pesca, bestiário" de 14/10 foi feito: ver "Pesca, bestiário, modo e caminho".)
 - **Ambiente com cara mais 3D / misturar pixel art** (pedido em 14/10): analisado na resposta — recomendação foi não
   misturar pixel art (quebra a identidade de "tudo é caractere") e sim passar o ambiente pelo mesmo caminho 3D→ASCII
   (árvores, casas, rochas e relevo como modelos/alturas iluminados), começando por um teste na vitrine. Aguardando ele.

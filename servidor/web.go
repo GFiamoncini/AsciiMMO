@@ -95,6 +95,14 @@ func stateOf(s Snapshot) wsState {
 	st.Paused, st.Frozen, st.Saves = s.Me.paused, s.Frozen, s.Me.saves
 	st.LightSlot = s.Me.LightSlot
 	st.House, st.StashGold = s.Me.House, s.Me.StashGold
+	st.Mode, st.FishKinds, st.FishBodies = s.Me.Mode, s.Me.FishKinds, s.Me.FishBodies
+	st.BestSeen, st.SteedSeen, st.BestKills = s.Me.BestSeen, s.Me.SteedSeen, s.Me.BestKills
+	if g := s.Me.goal; g != nil {
+		st.Goal = &[2]int{g.x, g.y}
+	}
+	if f := s.Me.fish; f != nil {
+		st.Fish = &proto.FishLine{X: f.x, Y: f.y, Bite: !s.Now.Before(f.biteAt) && !s.Now.After(f.until), Water: f.water}
+	}
 	for _, v := range s.Me.Stash {
 		st.Stash = append(st.Stash, [2]int{v.Item, v.N})
 	}
@@ -201,7 +209,7 @@ func initOf(wd *World, id int) wsInit {
 		if it.Kind == kindWeapon {
 			wt = weaponType[i]
 		}
-		in.Items = append(in.Items, wsItem{Name: it.Name, Kind: it.Kind, Rarity: it.Rarity, Bonus: it.Bonus, Def: it.Def, Magic: it.Magic, WType: wt, Color: int(it.Color), Desc: it.Desc})
+		in.Items = append(in.Items, wsItem{Name: it.Name, Kind: it.Kind, Rarity: it.Rarity, Bonus: it.Bonus, Def: it.Def, Magic: it.Magic, WType: wt, Color: int(it.Color), Desc: it.Desc, Price: fishPrice(i)})
 	}
 	for i := range attrNames {
 		in.Attrs = append(in.Attrs, [2]string{attrNames[i], attrDescs[i]})
@@ -271,6 +279,20 @@ func initOf(wd *World, id int) wsInit {
 	for _, c := range chapters {
 		in.Chapters = append(in.Chapters, [2]string{c.Title, c.Intro})
 	}
+	for k := range mobKinds {
+		b := bestiary[k]
+		in.Beasts = append(in.Beasts, proto.Beast{Name: mobKinds[k].Name, Lv: mobLv(k), HP: mobKinds[k].HP, Dmg: mobKinds[k].Dmg,
+			DmgSp: mobKinds[k].DmgSp, Boss: mobKinds[k].Boss, Lore: b.Lore, Weak: elemList(b.Weak), Resist: elemList(b.Resist)})
+	}
+	for k, sk := range steedKinds {
+		in.SteedLore = append(in.SteedLore, steedLore[k%len(steedLore)])
+		_ = sk
+	}
+	in.Waters = waterNames[:]
+	for _, f := range fishes {
+		in.Fishes = append(in.Fishes, fishDesc(f))
+	}
+	in.Fish0, in.Modes = itemFish0, modeNames[:]
 	for i, l := range lots {
 		x, y := lotDoor(i)
 		in.Houses = append(in.Houses, proto.HouseLot{Name: l.Name, X: x, Y: y, Price: l.Price})
@@ -465,6 +487,14 @@ func newWebServer(addr string, world *World) *http.Server {
 					world.ToggleLight(id)
 				case "tame":
 					world.Tame(id, in.Text)
+				case "mode":
+					world.SetMode(id, in.I)
+				case "goto":
+					world.SetGoal(id, in.I, in.Slot)
+				case "nogoto":
+					world.CancelGoal(id)
+				case "fish":
+					world.FishCast(id)
 				case "house":
 					world.BuyHouse(id, in.I)
 				case "stash":

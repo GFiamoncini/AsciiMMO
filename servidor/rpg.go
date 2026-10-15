@@ -259,6 +259,7 @@ const (
 	kindKey      = proto.KindKey
 	kindBag      = proto.KindBag
 	kindTool     = proto.KindTool
+	kindFish     = proto.KindFish
 )
 
 // Raridade: quanto mais alta, mais forte o item e mais difícil sair do baú.
@@ -518,6 +519,9 @@ func (wd *World) mobDied(m *Mob, killer *Player, now time.Time) {
 	k := mobKinds[m.Kind]
 	m.HP, m.Alive, m.armed, m.respawnAt = 0, false, false, now.Add(k.Respawn)
 	if killer != nil {
+		killer.countKill(m.Kind) // bestiário (bestiario.go)
+	}
+	if killer != nil {
 		killer.Kills++
 	}
 	// A experiência da tabela vai para todos por perto; o dinheiro cai no chão.
@@ -655,6 +659,8 @@ func sellPrice(m *merchant, it int) int {
 		return 100
 	case kindMoney:
 		return 0
+	case kindFish:
+		return fishPrice(it)
 	}
 	return []int{30, 90, 200, 400}[clampInt(d.Rarity, 0, 3)]
 }

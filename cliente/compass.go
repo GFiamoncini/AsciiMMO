@@ -141,6 +141,10 @@ func (g *Game) drawCompass(dst *ebiten.Image, me *proto.Player, cw float64) {
 	}
 	sort.Slice(ms, func(i, j int) bool { return ms[i].dist < ms[j].dist })
 	ms = ms[:min(len(ms), 6)]
+	if gl := g.cur.Goal; gl != nil {
+		dx, dy := float64(gl[0]-me.X), float64(gl[1]-me.Y)
+		ms = append(ms, mark{math.Atan2(dx, -dy) * 180 / math.Pi, math.Hypot(dx, dy), "!", col{255, 128, 64}, "destino"})
+	}
 	if g.opts.QuestArrow {
 		for _, mk := range g.cur.Marks {
 			if mk.Side {
