@@ -531,7 +531,11 @@ func (wd *World) mobDied(m *Mob, killer *Player, now time.Time) {
 			p.Bosses |= 1 << bit
 		}
 		if mobKinds[m.Kind].Boss {
+			first := p.Slain&(1<<uint(m.Kind)) == 0
 			p.Slain |= 1 << uint(m.Kind)
+			if first {
+				wd.purifyNews(p, m.Kind) // purificou a região (veu.go)
+			}
 		}
 		wd.pop(p, fmt.Sprintf("+%d XP (%d%%)", rw.XP, max(1, rw.XP*100/xpNeed(p.Level))), 0x9ad0ff, m.X, m.Y-20, now)
 		wd.gainXP(p, rw.XP)

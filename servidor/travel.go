@@ -64,6 +64,9 @@ func (wd *World) Travel(id, i int) {
 	}
 	now := wd.clock()
 	t := wd.travel[i]
+	if r := regionAt(t.X, t.Y); r >= 0 && wd.veilBlocks(p, regions[r], now) {
+		return // o Véu de Cinzas também barra a viagem para dentro do Pico
+	}
 	x, y, ok := wd.freeNear(t.X, t.Y+4, 20)
 	if !ok {
 		return

@@ -96,6 +96,7 @@ func stateOf(s Snapshot) wsState {
 	st.LightSlot = s.Me.LightSlot
 	st.House, st.StashGold = s.Me.House, s.Me.StashGold
 	st.Mode, st.FishKinds, st.FishBodies = s.Me.Mode, s.Me.FishKinds, s.Me.FishBodies
+	st.Pure = s.Me.purified()
 	st.BestSeen, st.SteedSeen, st.BestKills = s.Me.BestSeen, s.Me.SteedSeen, s.Me.BestKills
 	if g := s.Me.goal; g != nil {
 		st.Goal = &[2]int{g.x, g.y}

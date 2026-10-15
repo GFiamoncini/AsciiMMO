@@ -302,6 +302,7 @@ type State struct {
 	Stash      [][2]int  `json:"stash,omitempty"` // baú da casa: item, quantidade
 	StashGold  int       `json:"stashg,omitempty"`
 	Mode       int       `json:"mode,omitempty"`   // modo de combate: 0 pacifista, 1 defensivo, 2 agressivo
+	Pure       int       `json:"pure"`             // regiões purificadas (bits, na ordem dos guardiões do Véu)
 	Goal       *[2]int   `json:"goal,omitempty"`   // caminhando até este ponto
 	Fish       *FishLine `json:"fish,omitempty"`   // linha de pesca na água
 	FishKinds  uint64    `json:"fishk,omitempty"`  // peixes já pegos (bits)

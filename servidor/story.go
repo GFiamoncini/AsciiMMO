@@ -114,6 +114,9 @@ func (wd *World) canEnter(p *Player, x, y int, now time.Time) bool {
 		if !inside || here {
 			continue
 		}
+		if wd.veilBlocks(p, r, now) { // Véu de Cinzas sobre o Pico de Tiamath (veu.go)
+			return false
+		}
 		if s := p.sealedBy(i); s >= 0 {
 			if now.Sub(p.sealAt) > 3*time.Second {
 				p.sealAt = now

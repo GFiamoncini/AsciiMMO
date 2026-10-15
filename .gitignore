@@ -1,0 +1,8 @@
+# Segredos e dados locais
+.ssh/
+saves/
+*.prof
+
+# Binários (gerados pelo build.ps1)
+*.exe
+*.exe~
