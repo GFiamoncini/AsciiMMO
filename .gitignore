@@ -3,6 +3,11 @@
 saves/
 *.prof
 
-# Binários (gerados pelo build.ps1)
+# Binários (gerados pelo build.ps1 no Windows e pelo servidor.sh/go build no Linux)
 *.exe
 *.exe~
+/asciimmo
+/asciimmo-cliente
+
+# Temporários do sistema de arquivos (NTFS montado no Linux)
+.fuse_hidden*
