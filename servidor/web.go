@@ -94,6 +94,10 @@ func stateOf(s Snapshot) wsState {
 	st.BagCap, st.Found, st.Tech, st.Gates = s.Me.bagCap(), s.Me.Found, s.Me.Tech, s.Me.Gates
 	st.Paused, st.Frozen, st.Saves = s.Me.paused, s.Frozen, s.Me.saves
 	st.LightSlot = s.Me.LightSlot
+	st.House, st.StashGold = s.Me.House, s.Me.StashGold
+	for _, v := range s.Me.Stash {
+		st.Stash = append(st.Stash, [2]int{v.Item, v.N})
+	}
 	if t := s.Me.tame; t != nil {
 		st.Tame = &proto.Tame{Name: tameName(t), Seq: t.seq, Left: math.Max(0, t.until.Sub(s.Now).Seconds())}
 	}
@@ -266,6 +270,10 @@ func initOf(wd *World, id int) wsInit {
 	}
 	for _, c := range chapters {
 		in.Chapters = append(in.Chapters, [2]string{c.Title, c.Intro})
+	}
+	for i, l := range lots {
+		x, y := lotDoor(i)
+		in.Houses = append(in.Houses, proto.HouseLot{Name: l.Name, X: x, Y: y, Price: l.Price})
 	}
 	for _, q := range quests { // missões principais, para o diário
 		in.Quests = append(in.Quests, proto.SideDef{Title: q.Title, Text: q.Text, Chapter: q.Chapter, Need: q.Need})
@@ -457,6 +465,10 @@ func newWebServer(addr string, world *World) *http.Server {
 					world.ToggleLight(id)
 				case "tame":
 					world.Tame(id, in.Text)
+				case "house":
+					world.BuyHouse(id, in.I)
+				case "stash":
+					world.Stash(id, in.I, in.Item, in.Slot)
 				case "wait":
 					world.Wait(id, in.I)
 				case "waitwx":

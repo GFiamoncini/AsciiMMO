@@ -293,7 +293,10 @@ type saveData struct {
 	HasPos    bool   // o lugar onde ele estava (saves antigos não têm)
 	PosX      int
 	PosY      int
-	LightSlot int // lanterna ou tocha no espaço de luz
+	LightSlot int       // lanterna ou tocha no espaço de luz
+	House     int       // casa comprada + 1
+	Stash     []invSlot // baú da casa
+	StashGold int
 }
 
 func hashToken(token string) string {
@@ -312,7 +315,7 @@ func (wd *World) persist(p *Player) {
 	}
 	b, err := json.MarshalIndent(saveData{p.token, p.Class, p.Level, p.XP, p.Gold, p.Points, p.SkillPts, p.Attr, [numOldTree]int{},
 		p.inv, p.Equip, p.Skin, p.Quest, p.QProg, p.QStep, p.Unlocked, p.Kills, p.Chests, p.Bosses, p.Seen, p.Ach, p.Helm, p.Boots, p.Amulet,
-		p.Steeds, p.LastSteed, 1, p.SideProg, p.SideDone, p.Bonfire, p.tokens, p.password, p.Moored, p.MoorX, p.MoorY, packFog(p.fog), p.Web, p.Bar[:], p.Slain, p.Bag, p.Found, p.Tech, p.Gates, &p.Intro, 1, true, p.X, p.Y, p.LightSlot}, "", "\t")
+		p.Steeds, p.LastSteed, 1, p.SideProg, p.SideDone, p.Bonfire, p.tokens, p.password, p.Moored, p.MoorX, p.MoorY, packFog(p.fog), p.Web, p.Bar[:], p.Slain, p.Bag, p.Found, p.Tech, p.Gates, &p.Intro, 1, true, p.X, p.Y, p.LightSlot, p.House, p.Stash, p.StashGold}, "", "\t")
 	if err != nil || os.MkdirAll(wd.saveDir, 0o755) != nil {
 		return
 	}
@@ -482,6 +485,15 @@ func (wd *World) DeleteChar(token, name string) error {
 // apply carrega um save no jogador, descartando o que não fizer sentido
 // (arquivo editado à mão ou de versão antiga).
 func (p *Player) apply(sv saveData) {
+	if sv.House > 0 && sv.House <= len(lots) {
+		p.House = sv.House
+	}
+	for _, v := range sv.Stash {
+		if v.Item >= 0 && v.Item < len(items) && v.N > 0 {
+			p.Stash = append(p.Stash, v)
+		}
+	}
+	p.StashGold = max(0, sv.StashGold)
 	if sv.LightSlot == itemLantern || sv.LightSlot == itemTorch {
 		p.LightSlot = sv.LightSlot
 	}

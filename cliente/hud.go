@@ -175,6 +175,8 @@ func (g *Game) drawHUD(dst *ebiten.Image, me *proto.Player) {
 		g.drawBonfirePanel(dst, me, cw, chh)
 	case "diario":
 		g.drawJournal(dst, cw, chh)
+	case "casa":
+		g.drawHouse(dst, me, cw, chh)
 	case "opts":
 		g.drawOptions(dst, cw, chh, lh)
 	case "tree":
@@ -360,6 +362,12 @@ func (g *Game) interactHint(me *proto.Player) string {
 			return "[E] tocar as runas · " + g.info.Seals[i].Hint
 		}
 		return g.info.Seals[i].Hint + "  (Enter para falar)"
+	}
+	if l := g.nearLot(me); l >= 0 {
+		if g.cur.House == l+1 {
+			return "[E] sua casa: abrir o baú"
+		}
+		return fmt.Sprintf("[E] %s · à venda por %d", g.info.Houses[l].Name, g.info.Houses[l].Price)
 	}
 	if t := g.nearTravel(me); t >= 0 {
 		if g.info.Travel[t].Kind == 0 {

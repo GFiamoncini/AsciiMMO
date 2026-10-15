@@ -173,6 +173,7 @@ type Game struct {
 	charsMsg    string
 	charsCh     chan charsResult
 	delConfirm  string
+	joinTab     string // aba da tela de entrada: "load" ou "new"
 	pwInput     string
 	focusPw     bool
 	use3D       bool          // humanoides em 3D (modo 3D)
@@ -692,6 +693,13 @@ func (g *Game) updateInput() {
 			g.sealMode, g.sealBuf = g.sealHere(), ""
 		case just(ebiten.KeyE):
 			if me := g.cur.pmap[g.info.ID]; me != nil {
+				if l := g.nearLot(me); l >= 0 && g.openPanel != "casa" {
+					g.openPanel = "casa" // casa à venda ou o baú da sua casa (casa.go)
+					break
+				} else if g.openPanel == "casa" {
+					g.openPanel = ""
+					break
+				}
 				if s := g.nearShop(me); s >= 0 && g.openPanel != "shop" {
 					g.openShop(s) // conversa com o mercador (loja.go)
 					break
@@ -774,6 +782,29 @@ func repeatKey(k ebiten.Key) bool {
 }
 
 func (g *Game) updateJoin() {
+	// Aba dos personagens salvos: 1 a 9 carregam; o teclado não escreve nos
+	// campos (eles estão na outra aba).
+	if g.joinTab == "load" {
+		for d := 0; d < min(9, len(g.chars)); d++ {
+			if inpututil.IsKeyJustPressed(ebiten.KeyDigit1+ebiten.Key(d)) && g.c == nil {
+				ch := g.chars[d]
+				g.nameInput, g.pwInput, g.cls = ch.Name, "", ch.Class
+				g.join()
+			}
+		}
+		ebiten.AppendInputChars(nil)
+		mx, my := ebiten.CursorPosition()
+		g.mouseX, g.mouseY = float64(mx)/g.ui, float64(my)/g.ui
+		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+			for _, r := range g.uiRects {
+				if g.mouseX >= r.x && g.mouseX < r.x+r.w && g.mouseY >= r.y && g.mouseY < r.y+r.h && r.fn != nil {
+					r.fn()
+					break
+				}
+			}
+		}
+		return
+	}
 	// O texto digitado vai para o campo em foco (nome ou senha); Tab alterna.
 	if inpututil.IsKeyJustPressed(ebiten.KeyTab) {
 		g.focusPw = !g.focusPw

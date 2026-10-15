@@ -20,6 +20,7 @@ var View vec3 // deslocamento x e y em pixels e lado da célula
 var Grid vec2 // colunas e linhas
 var Bloom float // força do brilho (0 desliga)
 var Tint float  // quanto da cor da célula pinta o fundo entre os glifos
+var Smooth float // luz suave: o brilho é interpolado entre as células vizinhas
 
 func Fragment(dstPos vec4, srcPos vec2, color vec4) vec4 {
 	bg := vec3(0.035, 0.035, 0.06)
@@ -36,6 +37,23 @@ func Fragment(dstPos vec4, srcPos vec2, color vec4) vec4 {
 	// O vão entre os traços não é preto: leva um tom escuro da cor da célula,
 	// e a imagem fica "pintada" sem perder o aspecto de texto.
 	col := mix(bg+d.rgb*Tint, d.rgb, a)
+	// Luz suave: o brilho de cada pixel vem da média das quatro células mais
+	// perto (bilinear), em relação ao brilho da própria célula. A luz cai em
+	// degradê dentro do caractere em vez de mudar de bloco em bloco.
+	if Smooth > 0 {
+		q := p/View.z - vec2(0.5)
+		i0 := floor(q)
+		fr := q - i0
+		w := vec3(0.3, 0.59, 0.11)
+		l00 := dot(imageSrc0At(imageSrc0Origin()+clamp(i0, vec2(0), Grid-1)+vec2(0.5)).rgb, w)
+		l10 := dot(imageSrc0At(imageSrc0Origin()+clamp(i0+vec2(1, 0), vec2(0), Grid-1)+vec2(0.5)).rgb, w)
+		l01 := dot(imageSrc0At(imageSrc0Origin()+clamp(i0+vec2(0, 1), vec2(0), Grid-1)+vec2(0.5)).rgb, w)
+		l11 := dot(imageSrc0At(imageSrc0Origin()+clamp(i0+vec2(1, 1), vec2(0), Grid-1)+vec2(0.5)).rgb, w)
+		lb := mix(mix(l00, l10, fr.x), mix(l01, l11, fr.x), fr.y)
+		lc := dot(d.rgb, w)
+		k := clamp((lb+0.03)/(lc+0.03), 0.55, 1.7)
+		col *= mix(1, k, Smooth)
+	}
 	// Brilho: o que é claro (fogo, magia, luz) solta um halo nas células em
 	// volta, como a luz vazando no vídeo de referência.
 	if Bloom > 0 {
@@ -122,6 +140,11 @@ func (g *gpu) buildAtlas(cs int) {
 
 // draw sobe a grade e pinta a tela inteira com o shader.
 func (g *gpu) draw(screen *ebiten.Image, buf []byte, cols, rows int, offX, offY float64, cs int, bloom float64) {
+	g.drawS(screen, buf, cols, rows, offX, offY, cs, bloom, 0)
+}
+
+// drawS é draw com a luz suave (0 desliga, 1 inteira).
+func (g *gpu) drawS(screen *ebiten.Image, buf []byte, cols, rows int, offX, offY float64, cs int, bloom, smooth float64) {
 	if g.cells == nil || g.cellW != cols || g.cellH != rows {
 		if g.cells != nil {
 			g.cells.Deallocate()
@@ -135,7 +158,7 @@ func (g *gpu) draw(screen *ebiten.Image, buf []byte, cols, rows int, offX, offY 
 		g.verts[i] = ebiten.Vertex{DstX: p[0], DstY: p[1], SrcX: p[0], SrcY: p[1], ColorR: 1, ColorG: 1, ColorB: 1, ColorA: 1}
 	}
 	op := &ebiten.DrawTrianglesShaderOptions{
-		Uniforms: map[string]any{"View": []float32{float32(offX), float32(offY), float32(cs)}, "Grid": []float32{float32(cols), float32(rows)}, "Bloom": float32(bloom), "Tint": float32(0.13)},
+		Uniforms: map[string]any{"View": []float32{float32(offX), float32(offY), float32(cs)}, "Grid": []float32{float32(cols), float32(rows)}, "Bloom": float32(bloom), "Tint": float32(0.13), "Smooth": float32(smooth)},
 		Images:   [4]*ebiten.Image{g.cells, g.atlas},
 	}
 	screen.DrawTrianglesShader(g.verts, g.idx, g.shader, op)

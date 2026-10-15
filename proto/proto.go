@@ -55,6 +55,7 @@ type Init struct {
 	Chapters [][2]string `json:"chapters"`         // título e abertura de cada capítulo
 	Sides    []SideDef   `json:"sides"`            // missões secundárias
 	Quests   []SideDef   `json:"quests,omitempty"` // missões principais em ordem (diário)
+	Houses   []HouseLot  `json:"houses,omitempty"` // casas à venda (porta e preço)
 	Fog      string      `json:"fog,omitempty"`    // explorado, em bits na escala do minimapa, gzip + base64
 	Doors    [][2]int    `json:"doors"`            // portas de cofre (centro da base)
 	Travel   []TravelPt  `json:"travel"`           // pontos de viagem rápida
@@ -272,24 +273,35 @@ type State struct {
 	MV     int                `json:"mv"`           // versão do mapa depois dessas mudanças
 	Reload bool               `json:"reload,omitempty"`
 
-	Chapter   int     `json:"chap"`             // capítulo atual (1..6; 7 depois do fim)
-	SideDone  uint    `json:"sdone"`            // bits das secundárias concluídas
-	SideProg  []int   `json:"sprog"`            // progresso de cada secundária
-	Bonfire   int     `json:"bf"`               // última fogueira acesa
-	Purged    []int   `json:"purged,omitempty"` // fogueiras com a área purificada agora
-	Event     int     `json:"ev,omitempty"`     // 1 = invasão noturna em curso
-	Pops      []Pop   `json:"pops"`
-	Moor      *[2]int `json:"moor,omitempty"`  // onde ficou o seu barco atracado
-	Marks     []Mark  `json:"marks,omitempty"` // onde fazer as missões em aberto
-	BagCap    int     `json:"bag"`             // espaços da mochila
-	Found     uint64  `json:"found"`           // pontos de viagem descobertos
-	Tech      int     `json:"tech,omitempty"`  // técnicas do Mestre aprendidas (bits)
-	Gates     uint32  `json:"gates,omitempty"` // Portões Rúnicos acesos (bits)
-	Paused    bool    `json:"pz,omitempty"`    // você está pausado
-	Frozen    bool    `json:"frz,omitempty"`   // o mundo parou (todos pausados)
-	Saves     int     `json:"sv,omitempty"`    // vezes que o personagem foi gravado (muda = "salvo")
-	LightSlot int     `json:"lslot,omitempty"` // lanterna ou tocha no espaço de luz
-	Tame      *Tame   `json:"tame,omitempty"`  // doma em andamento: a sequência a tocar
+	Chapter   int      `json:"chap"`             // capítulo atual (1..6; 7 depois do fim)
+	SideDone  uint     `json:"sdone"`            // bits das secundárias concluídas
+	SideProg  []int    `json:"sprog"`            // progresso de cada secundária
+	Bonfire   int      `json:"bf"`               // última fogueira acesa
+	Purged    []int    `json:"purged,omitempty"` // fogueiras com a área purificada agora
+	Event     int      `json:"ev,omitempty"`     // 1 = invasão noturna em curso
+	Pops      []Pop    `json:"pops"`
+	Moor      *[2]int  `json:"moor,omitempty"`  // onde ficou o seu barco atracado
+	Marks     []Mark   `json:"marks,omitempty"` // onde fazer as missões em aberto
+	BagCap    int      `json:"bag"`             // espaços da mochila
+	Found     uint64   `json:"found"`           // pontos de viagem descobertos
+	Tech      int      `json:"tech,omitempty"`  // técnicas do Mestre aprendidas (bits)
+	Gates     uint32   `json:"gates,omitempty"` // Portões Rúnicos acesos (bits)
+	Paused    bool     `json:"pz,omitempty"`    // você está pausado
+	Frozen    bool     `json:"frz,omitempty"`   // o mundo parou (todos pausados)
+	Saves     int      `json:"sv,omitempty"`    // vezes que o personagem foi gravado (muda = "salvo")
+	LightSlot int      `json:"lslot,omitempty"` // lanterna ou tocha no espaço de luz
+	Tame      *Tame    `json:"tame,omitempty"`  // doma em andamento: a sequência a tocar
+	House     int      `json:"house,omitempty"` // casa comprada + 1
+	Stash     [][2]int `json:"stash,omitempty"` // baú da casa: item, quantidade
+	StashGold int      `json:"stashg,omitempty"`
+}
+
+// HouseLot é uma casa à venda: nome, frente da porta e preço.
+type HouseLot struct {
+	Name  string `json:"name"`
+	X     int    `json:"x"`
+	Y     int    `json:"y"`
+	Price int    `json:"price"`
 }
 
 // Tame é a doma em andamento: o bicho, a sequência (U D L R) e o tempo que falta.

@@ -92,6 +92,9 @@ type Player struct {
 	Gates      uint32    // Portões Rúnicos acesos (bits; portoes.go)
 	Light      int       // luz acesa: 0 nada, 1 tocha, 2 lanterna (tools.go)
 	LightSlot  int       // lanterna ou tocha equipada no espaço de luz (luz.go)
+	House      int       // casa comprada + 1 (casa.go)
+	Stash      []invSlot // baú da casa
+	StashGold  int       // dinheiro no baú
 	autoLit    bool      // a luz acesa foi acesa sozinha ao descer
 	wasUnder   bool      // estava no subsolo no último segundo
 	torchUntil time.Time // quando a tocha acesa acaba
@@ -835,6 +838,7 @@ func (wd *World) Snapshot(id int) Snapshot {
 		if p.ID == id {
 			s.Me = *p
 			s.Me.inv = append([]invSlot(nil), p.inv...)
+			s.Me.Stash = append([]invSlot(nil), p.Stash...)
 			s.Me.chestDay = maps.Clone(p.chestDay)
 			s.Me.pops = append([]pop(nil), p.pops...)
 		}

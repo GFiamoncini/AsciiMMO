@@ -139,6 +139,7 @@ func (wd *World) generate(seed uint32) {
 	wd.camps()
 	wd.villageDressing(seed)
 	wd.buildMerchantPosts(seed) // cabana ou barraca para os mercadores de fora da vila (lojas.go)
+	wd.houseMarks(seed)         // placas das casas à venda (casa.go)
 	wd.buildSeals(seed)
 	wd.buildIntro(seed)
 	wd.buildDojo(seed)

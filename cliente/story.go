@@ -185,20 +185,21 @@ func (g *Game) bonfireLabels(me *proto.Player) {
 // ---------- opções ----------
 
 type options struct {
-	Fullscreen bool `json:"tela_cheia"`
-	ShowFPS    bool `json:"mostrar_fps"`
-	Mode       int  `json:"modo_personagens"` // 0 = 2D, 1 = Mescla (2D com luz 3D), 2 = 3D
-	Bloom      bool `json:"brilho"`
-	FOVClassic bool `json:"campo_visao_classico"` // esconde o que está fora da vista, como nos roguelikes
-	NoDepth    bool `json:"sem_profundidade"`     // desliga o volume do cenário (depth.go)
-	QuestArrow bool `json:"seta_missao"`          // seta na borda da tela apontando a missão (padrão desligada: explorar)
-	HideMenu   bool `json:"esconder_menu"`        // esconde o menu de teclas (lista da direita e linha H/L)
-	NoCompass  bool `json:"sem_bussola"`          // esconde a bússola no alto da tela
-	VolMusic   int  `json:"volume_musica"`        // 0..100
-	VolSfx     int  `json:"volume_efeitos"`       // 0..100
-	VolAmb     int  `json:"volume_ambiente"`      // 0..100
-	MuteUnfocused bool `json:"mudo_sem_foco"`     // cala o jogo quando a janela perde o foco
-	NoPauseInMenus bool `json:"nao_pausar_menus"` // janelas abertas não pausam (pausa.go)
+	Fullscreen     bool `json:"tela_cheia"`
+	ShowFPS        bool `json:"mostrar_fps"`
+	Mode           int  `json:"modo_personagens"` // 0 = 2D, 1 = Mescla (2D com luz 3D), 2 = 3D
+	Bloom          bool `json:"brilho"`
+	FOVClassic     bool `json:"campo_visao_classico"` // esconde o que está fora da vista, como nos roguelikes
+	NoDepth        bool `json:"sem_profundidade"`     // desliga o volume do cenário (depth.go)
+	QuestArrow     bool `json:"seta_missao"`          // seta na borda da tela apontando a missão (padrão desligada: explorar)
+	HideMenu       bool `json:"esconder_menu"`        // esconde o menu de teclas (lista da direita e linha H/L)
+	NoCompass      bool `json:"sem_bussola"`          // esconde a bússola no alto da tela
+	VolMusic       int  `json:"volume_musica"`        // 0..100
+	VolSfx         int  `json:"volume_efeitos"`       // 0..100
+	VolAmb         int  `json:"volume_ambiente"`      // 0..100
+	MuteUnfocused  bool `json:"mudo_sem_foco"`        // cala o jogo quando a janela perde o foco
+	NoPauseInMenus bool `json:"nao_pausar_menus"`     // janelas abertas não pausam (pausa.go)
+	NoSmoothLight  bool `json:"sem_luz_suave"`        // desliga a luz suave da GPU (gfx.go)
 }
 
 // Modos de desenho dos personagens.
@@ -265,6 +266,7 @@ func (g *Game) drawOptions(dst *ebiten.Image, cw, chh, lh float64) {
 		{fmt.Sprintf("Música: %d%%  (clique troca)", g.opts.VolMusic), g.opts.VolMusic > 0, func() { g.opts.VolMusic = nextVol(g.opts.VolMusic); g.saveOptions() }},
 		{fmt.Sprintf("Efeitos: %d%%  (clique troca)", g.opts.VolSfx), g.opts.VolSfx > 0, func() { g.opts.VolSfx = nextVol(g.opts.VolSfx); g.saveOptions(); g.sfx("hit", 0.8) }},
 		{fmt.Sprintf("Ambiente: %d%%  (clique troca)", g.opts.VolAmb), g.opts.VolAmb > 0, func() { g.opts.VolAmb = nextVol(g.opts.VolAmb); g.saveOptions() }},
+		{"Luz suave (GPU)", !g.opts.NoSmoothLight, func() { g.opts.NoSmoothLight = !g.opts.NoSmoothLight; g.saveOptions() }},
 		{"Pausar ao abrir menus", !g.opts.NoPauseInMenus, func() { g.opts.NoPauseInMenus = !g.opts.NoPauseInMenus; g.saveOptions() }},
 		{"Calar o jogo sem foco", g.opts.MuteUnfocused, func() { g.opts.MuteUnfocused = !g.opts.MuteUnfocused; g.saveOptions() }},
 	}

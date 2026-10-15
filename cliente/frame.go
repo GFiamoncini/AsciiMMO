@@ -1078,7 +1078,11 @@ func (g *Game) frame(screen *ebiten.Image) {
 	if g.opts.Bloom {
 		bloom = 0.55
 	}
-	g.g.draw(screen, buf, cols, rows, offX, offY, g.cs, bloom)
+	smooth := 0.0
+	if !g.opts.NoSmoothLight {
+		smooth = 0.85
+	}
+	g.g.drawS(screen, buf, cols, rows, offX, offY, g.cs, bloom, smooth)
 
 	g.drawLabels(screen, camL, camT)
 	g.drawBubbles(screen, camL, camT, g.talkers)

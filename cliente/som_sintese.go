@@ -24,8 +24,8 @@ func (r *rnd) next() uint32 {
 	r.s ^= r.s << 5
 	return r.s
 }
-func (r *rnd) f() float64     { return float64(r.next()) / 4294967296 }
-func (r *rnd) n() float64     { return r.f()*2 - 1 }
+func (r *rnd) f() float64               { return float64(r.next()) / 4294967296 }
+func (r *rnd) n() float64               { return r.f()*2 - 1 }
 func (r *rnd) rng(a, b float64) float64 { return a + (b-a)*r.f() }
 
 // svf é o filtro de variável de estado: passa-baixa, passa-banda e passa-alta
