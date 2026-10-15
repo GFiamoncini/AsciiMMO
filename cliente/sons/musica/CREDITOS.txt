@@ -1,0 +1,11 @@
+Músicas do AsciiMMO — todas CC0 (domínio público, https://creativecommons.org/publicdomain/zero/1.0/),
+baixadas do OpenGameArt em 14/10/2026. Crédito não é obrigatório, mas fica registrado aqui.
+
+dia.ogg     "calm theme" — pebonius (https://pebonius.itch.io) — https://opengameart.org/node/156511
+vila.ogg    "peaceful theme" — pebonius — https://opengameart.org/node/156541
+noite.ogg   "foreboding theme" — pebonius — https://opengameart.org/node/156540
+cripta.ogg  "dungeon ambience" — yd — https://opengameart.org/content/dungeon-ambience
+fundo.ogg   "loopable dungeon ambience" — JaggedStone — https://opengameart.org/content/loopable-dungeon-ambience
+chefe.ogg   "Heavy Boss Battle 2" — MintoDog — https://opengameart.org/content/heavy-boss-battle-2
+
+Os efeitos e os sons de ambiente não vêm de arquivo: são gerados por código (cliente/som_sintese.go).
