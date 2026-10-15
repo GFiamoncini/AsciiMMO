@@ -194,13 +194,21 @@ func (g *Game) drawHUD(dst *ebiten.Image, me *proto.Player) {
 		g.drawRead(dst, cw, chh)
 	}
 	if g.bigMap {
-		src := g.mapSrc(me)
-		k := math.Min((cw-80)/float64(src.w), (chh-150)/float64(src.h))
-		mw, mh := float64(src.w)*k, float64(src.h)*k
+		// O mapa grande é uma janela à parte: escurece tudo atrás (nada de
+		// menu aparecendo misturado) e tem zoom (roda, + e −) e arrasto
+		// (botão direito) — mapa_zoom.go.
+		g.rect(dst, 0, 0, cw, chh, color.RGBA{0, 0, 0, 215})
+		full := g.mapSrc(me)
+		k := math.Min((cw-80)/float64(full.w), (chh-150)/float64(full.h))
+		mw, mh := float64(full.w)*k, float64(full.h)*k
 		mx, my := (cw-mw)/2, (chh-mh)/2+10
+		src := g.bigMapView(full, me, mx, my, mw, mh)
 		g.panel(dst, mx-6, my-28, mw+12, mh+34, cGold)
-		g.txt(dst, "Mapa — as áreas escuras ainda não foram exploradas (M fecha) · "+g.goalText(me), mx, my-22, cGold, 13, false, alignLeft)
+		g.txt(dst, "Mapa (M fecha) · roda/+/− zoom, botão direito arrasta, 0 volta · "+g.goalText(me), mx, my-22, cGold, 13, false, alignLeft)
 		g.drawMap(dst, me, mx, my, mw, mh, src, true)
+		if g.mapZoom > 1.01 {
+			g.txt(dst, fmt.Sprintf("zoom %.1fx", g.mapZoom), mx+mw-6, my-22, cDim, 12, false, alignRight)
+		}
 		g.bigMapClick(mx, my, mw, mh, src) // clicar: caminhar até lá (pesca.go)
 	}
 

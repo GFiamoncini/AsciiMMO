@@ -202,4 +202,12 @@ func (g *Game) drawJoin(dst *ebiten.Image) {
 		g.txt(dst, l, x+20, y+h-60+float64(i)*16, rgbaHex(0xe0b070), 12, false, alignLeft)
 	}
 	g.txt(dst, "Servidor: "+g.server+"   ·   F11 tela cheia", x+20, y+h-24, cDimmer, 11, false, alignLeft)
+	// Sair do jogo (fecha a janela).
+	qw := 130.0
+	qx, qy := x+w-16-qw, y+h-34
+	hov := g.hover(qx, qy, qw, 26)
+	g.rect(dst, qx, qy, qw, 26, color.RGBA{40, 16, 16, 255})
+	g.stroke(dst, qx, qy, qw, 26, pickRGBA(hov, rgbaHex(0xff6060), rgbaHex(0x8a3030)), 1)
+	g.txt(dst, "Sair do jogo", qx+qw/2, qy+5, pickC(hov, rgbaHex(0xff8080), cText), 13, false, alignCenter)
+	g.uiRects = append(g.uiRects, uiRect{x: qx, y: qy, w: qw, h: 26, fn: func() { g.quit = true }})
 }

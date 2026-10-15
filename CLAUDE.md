@@ -38,6 +38,13 @@ para `D:\Projetos\Private\AsciiMMO`. Repositório git no GitHub: https://github.
 
 ## Como rodar
 
+No Linux (esta versão): `./servidor.sh iniciar | parar | reiniciar | estado | log | compilar` (pid e log em
+`~/AsciiMMO/servidor.{pid,log}`; parar manda SIGTERM, que o servidor trata gravando todos). `estado` avisa quando o
+binário foi recompilado depois que o servidor subiu. Cliente: `./asciimmo-cliente` (tela de entrada e menu de pausa
+têm "Sair do jogo").
+
+No Windows:
+
 ```powershell
 .\build.ps1                    # compila servidor e cliente com o ícone embutido
 .\asciimmo.exe                 # SSH em :2222, cliente web em :8080, saves em Documentos\AsciiMMO\save
@@ -533,6 +540,18 @@ temporária da sessão (yt-dlp.exe do GitHub, ffmpeg-release-essentials do gyan.
 - **Caminhar até um ponto**: clique no mapa grande (M) → msg `goto` (I=x, Slot=y); `coarsePath` (A* de 4 em 4 com
   `fits`, até 150 mil nós) e `driveGoal` conduz; tecla de andar cancela, Esc cancela (`nogoto`), preso refaz uma vez.
   Destino no mapa, no mundo (bandeira) e na bússola. TestModoECaminho.
+
+## Voz dos NPCs, zoom do mapa, retratos do bestiário (15/10/2026, madrugada)
+
+- **Voz dos NPCs** (`cliente/voz.go`): conversas e falas dos mercadores surgem letra a letra (`voiceCPS` 24) e cada
+  palavra é dita na língua velha no tom de quem fala (`voicePitch`). E/Espaço primeiro completam a fala.
+- **Mapa grande** (`cliente/mapa_zoom.go`): zoom com roda/+/− até 8x no cursor, arrasto com o botão direito, 0 volta;
+  ao abrir, fecha os painéis e escurece a tela atrás. Os nomes das regiões seguem o zoom.
+- **Retratos no bestiário** (`cliente/retrato_bicho.go`): o bicho desenhado pelo próprio `drawBody`/`drawBeast` numa
+  grade pequena (troca temporária de `g.buf`/`g.x0`…), pintado numa imagem por criatura com uma instância do shader
+  de atlas próprio; guardado em `g.creatures`.
+- **Lembrete**: o bestiário dele estava vazio porque o servidor rodando era o das 21:36 (nunca reiniciado); mortes
+  antigas não têm tipo, a contagem começa ao reiniciar.
 
 ## Fila (próximas rodadas)
 

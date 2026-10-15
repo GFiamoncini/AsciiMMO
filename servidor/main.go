@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
 	"asciimmo/proto"
@@ -52,7 +53,7 @@ func main() {
 	weather := flag.String("weather", "auto", "clima fixo: auto, clear, rain ou storm")
 	flag.Parse()
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM) // Ctrl+C ou "servidor.sh parar": grava todos e sai
 	defer stop()
 
 	world := NewWorld(*seed)

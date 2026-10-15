@@ -59,7 +59,7 @@ func (g *Game) shopLine(s proto.Shop, talk bool, k int) string {
 func (g *Game) openShop(i int) {
 	g.openPanel, g.shopIdx, g.shopView, g.shopSel = "shop", i, "menu", 0
 	g.shopSay, g.shopSayAt = g.shopLine(g.info.Shops[i], false, int(g.now()/1000)), g.now()
-	g.sfx("msg", 0.4)
+	g.say(g.info.Shops[i].Name, g.shopSay)
 }
 
 // stackable diz se faz sentido comprar ou vender vários de uma vez.
@@ -189,7 +189,10 @@ func (g *Game) drawShop(dst *ebiten.Image, me *proto.Player, cw, chh, lh float64
 
 	// A fala do mercador, surgindo letra a letra, num balão.
 	say := []rune(g.shopSay)
-	n := min(len(say), int((g.now()-g.shopSayAt)/22))
+	if g.voice == nil || g.voice.text != g.shopSay {
+		g.say(s.Name, g.shopSay) // fala nova do mercador: com voz (voz.go)
+	}
+	n := min(len(say), g.typed())
 	g.rect(dst, x+16, y+38, w-32, 44, color.RGBA{24, 18, 14, 255})
 	g.stroke(dst, x+16, y+38, w-32, 44, rgbaHex(0x6a4a2a), 1)
 	for i, l := range g.wrapPx("“"+string(say[:n])+"”", 14, w-60) {

@@ -104,12 +104,21 @@ type Game struct {
 	bigMap, mapShut             bool
 	chatting                    bool
 	chatBuf                     []rune
-	chatSent                    []string  // o que já foi dito, para voltar com ↑/↓ no chat
-	chatPos                     int       // posição em chatSent enquanto se navega (len = linha nova)
-	logScroll                   int       // linhas roladas para trás no registro (L)
-	pauseMenu                   bool      // menu de pausa aberto (pausa.go)
-	fishBit                     bool      // o peixe estava mordendo no quadro passado
-	scene                       *sceneBuf // grade da cena da abertura (abertura_cena.go)
+	chatSent                    []string                      // o que já foi dito, para voltar com ↑/↓ no chat
+	chatPos                     int                           // posição em chatSent enquanto se navega (len = linha nova)
+	logScroll                   int                           // linhas roladas para trás no registro (L)
+	pauseMenu                   bool                          // menu de pausa aberto (pausa.go)
+	creatures                   map[creatureKey]*ebiten.Image // retratos do bestiário (retrato_bicho.go)
+	portG                       *gpu
+	mapZoom                     float64     // zoom do mapa grande (mapa_zoom.go)
+	mapCX, mapCY                float64     // centro da vista do mapa grande
+	mapDrag                     *[2]float64 // arrastando com o botão direito: onde começou
+	mapArea                     mapRect
+	mapFullW, mapFullH          float64
+	mapZone                     string
+	voice                       *utterance // fala com voz em andamento (voz.go)
+	fishBit                     bool       // o peixe estava mordendo no quadro passado
+	scene                       *sceneBuf  // grade da cena da abertura (abertura_cena.go)
 	sceneG                      *gpu
 	thunderAt                   float64
 	introSpoken, introVoicePage int    // narração: palavras já faladas e de que página
@@ -557,7 +566,9 @@ func (g *Game) updateInput() {
 		g.lastMX, g.lastMY = mx, my
 		g.mouseX, g.mouseY, g.mouseAt = float64(mx)/g.ui, float64(my)/g.ui, g.now()
 	}
-	if _, wy := ebiten.Wheel(); g.openPanel == "diario" {
+	if _, wy := ebiten.Wheel(); g.bigMap {
+		g.zoomMap(wy) // mapa grande: a roda dá zoom no cursor
+	} else if g.openPanel == "diario" {
 		g.journalKeys(wy) // o diário rola com a roda e as setas
 	} else if wy != 0 && g.showLog && !g.chatting {
 		g.logScroll += 3 * sign(wy) // com o registro aberto, a roda rola as mensagens
@@ -671,7 +682,7 @@ func (g *Game) updateInput() {
 		case just(ebiten.KeyH):
 			g.showHelp = !g.showHelp
 		case just(ebiten.KeyM):
-			g.bigMap = !g.bigMap
+			g.bigMap, g.openPanel, g.mapZoom = !g.bigMap, "", 0 // o mapa grande fecha os outros painéis
 		case just(ebiten.KeyEscape):
 			if g.openPanel == "" && !g.bigMap && !g.showHelp && !g.showLog {
 				g.pauseMenu = true // nada aberto: Esc pausa

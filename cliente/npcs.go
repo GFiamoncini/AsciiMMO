@@ -60,6 +60,7 @@ func (g *Game) openTalk(i int) {
 		return
 	}
 	g.talkNPC, g.talkLine = i, 0
+	g.say(g.info.NPCs[i].Name, g.info.NPCs[i].Lines[0]) // voz (voz.go)
 	g.send(proto.In{T: "talk", I: i})
 }
 
@@ -72,15 +73,21 @@ func (g *Game) updateTalk() bool {
 	just := func(k ebiten.Key) bool { return justKey(k) }
 	switch {
 	case just(ebiten.KeyEscape):
-		g.talkNPC = -1
+		g.talkNPC, g.voice = -1, nil
 	case just(ebiten.KeyE), just(ebiten.KeySpace), just(ebiten.KeyEnter), justClick():
+		if !g.voiceDone() { // primeiro toque completa a fala
+			g.voiceComplete()
+			break
+		}
 		g.talkLine++
 		if n := g.info.NPCs[g.talkNPC]; g.talkLine >= len(n.Lines) {
-			g.talkNPC = -1
+			g.talkNPC, g.voice = -1, nil
 			if n.Teach {
 				g.metMaster = true
 				g.openDojo()
 			}
+		} else {
+			g.say(n.Name, n.Lines[g.talkLine])
 		}
 	}
 	return true
@@ -92,8 +99,13 @@ func (g *Game) drawTalk(dst *ebiten.Image, cw, chh float64) {
 	}
 	n := g.info.NPCs[g.talkNPC]
 	w := math.Min(640, cw-rightW-40)
-	lines := g.wrapPx(n.Lines[g.talkLine], 14, w-110)
+	full := n.Lines[g.talkLine]
+	lines := g.wrapPx(full, 14, w-110)
 	h := math.Max(96, float64(len(lines))*19+56)
+	// A fala surge letra a letra, falada (voz.go); a caixa já tem o tamanho final.
+	if g.voice != nil && g.voice.text == full {
+		lines = g.wrapPx(string([]rune(full)[:g.typed()]), 14, w-110)
+	}
 	x, y := (cw-rightW-w)/2, chh-120-h
 	g.panel(dst, x, y, w, h, rgbaHex(0xd6b050))
 	pi := 1 // o velho de chapéu (retrato do mago)

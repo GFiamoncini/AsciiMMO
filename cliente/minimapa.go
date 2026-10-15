@@ -254,14 +254,14 @@ func (g *Game) drawMap(dst *ebiten.Image, me *proto.Player, x, y, mw, mh float64
 			g.txt(dst, title, px, py+r+3, c, 12, false, alignCenter)
 		}
 	}
-	if !big || src.y != 0 {
+	if !big || src.y >= g.info.OverH {
 		return
 	}
 	for ri, r := range g.info.Regions {
-		if !g.seen(r.X, r.Y) {
+		if !g.seen(r.X, r.Y) || r.Y >= g.info.OverH || r.X < src.x || r.X > src.x+src.w || r.Y < src.y || r.Y > src.y+src.h {
 			continue
 		}
-		tx, ty := x+float64(r.X)/float64(src.w)*mw, y+(float64(r.Y)-float64(r.R)*0.5)/float64(src.h)*mh
+		tx, ty := x+float64(r.X-src.x)/float64(src.w)*mw, y+(float64(r.Y-src.y)-float64(r.R)*0.5)/float64(src.h)*mh
 		name, nc := r.Name, color.Color(color.White)
 		if g.sealedBy(ri) >= 0 {
 			name, nc = r.Name+" (selado)", rgbaHex(0xc080ff)

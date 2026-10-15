@@ -132,7 +132,7 @@ func (g *Game) drawPause(dst *ebiten.Image, cw, chh float64) {
 		return
 	}
 	g.rect(dst, 0, 0, cw, chh, color.RGBA{0, 0, 0, 150})
-	w, h := 360.0, 330.0
+	w, h := 360.0, 370.0
 	x, y := (cw-w)/2, (chh-h)/2
 	g.panel(dst, x, y, w, h, cGold)
 	for _, p := range [][2]float64{{x, y}, {x + w, y}, {x, y + h}, {x + w, y + h}} {
@@ -155,6 +155,7 @@ func (g *Game) drawPause(dst *ebiten.Image, cw, chh float64) {
 		{"O", "Opções", func() { g.pauseMenu = false; g.openPanel = "opts" }},
 		{"H", "Controles", func() { g.pauseMenu = false; g.showHelp = true }},
 		{"", "Voltar à tela de entrada", g.leaveWorld},
+		{"", "Sair do jogo", func() { g.leaveWorld(); g.quit = true }},
 	}
 	for i, r := range rows {
 		ry := y + 84 + float64(i)*40

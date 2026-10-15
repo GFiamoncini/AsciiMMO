@@ -154,8 +154,14 @@ func (g *Game) drawJournal(dst *ebiten.Image, cw, chh float64) {
 			if b.Boss {
 				name += "  (chefe)"
 			}
-			line(fmt.Sprintf("%s · nível %d · vida %d · dano %d–%d · derrotados: %d", name, b.Lv, b.HP, b.Dmg, b.Dmg+b.DmgSp, kills), pickC(b.Boss, rgbaHex(0xff9070), cText), 13, 18)
-			line(b.Lore, cDim, 12, 30)
+			// Retrato à esquerda (o desenho do próprio bicho: retrato_bicho.go).
+			const ps = 64.0
+			y0 := cy
+			if cy >= top-2 && cy < bottom-ps {
+				g.drawCreature(dst, k, false, x+20, cy, ps)
+			}
+			line(fmt.Sprintf("%s · nível %d · vida %d · dano %d–%d · derrotados: %d", name, b.Lv, b.HP, b.Dmg, b.Dmg+b.DmgSp, kills), pickC(b.Boss, rgbaHex(0xff9070), cText), 13, ps+8)
+			line(b.Lore, cDim, 12, ps+8)
 			if len(b.Weak) > 0 || len(b.Resist) > 0 {
 				ws := ""
 				if len(b.Weak) > 0 {
@@ -167,9 +173,9 @@ func (g *Game) drawJournal(dst *ebiten.Image, cw, chh float64) {
 					}
 					ws += "resiste a " + strings.Join(b.Resist, ", ")
 				}
-				line(ws, rgbaHex(0xe0c060), 12, 30)
+				line(ws, rgbaHex(0xe0c060), 12, ps+8)
 			}
-			cy += 4
+			cy = max(cy, y0+ps) + 8
 		}
 		if unseen > 0 {
 			line(fmt.Sprintf("+ %d criaturas ainda não vistas: chegue perto delas para registrar", unseen), cDimmer, 12, 18)
@@ -186,10 +192,16 @@ func (g *Game) drawJournal(dst *ebiten.Image, cw, chh float64) {
 			if tamed {
 				st = "domado"
 			}
-			line(fmt.Sprintf("%s · doma no nível %d · %s", sk.Name, sk.Level, st), cText, 13, 18)
-			if k < len(g.info.SteedLore) {
-				line(g.info.SteedLore[k], cDim, 12, 30)
+			const ps = 64.0
+			y0 := cy
+			if cy >= top-2 && cy < bottom-ps {
+				g.drawCreature(dst, k, true, x+20, cy, ps)
 			}
+			line(fmt.Sprintf("%s · doma no nível %d · %s", sk.Name, sk.Level, st), cText, 13, ps+8)
+			if k < len(g.info.SteedLore) {
+				line(g.info.SteedLore[k], cDim, 12, ps+8)
+			}
+			cy = max(cy, y0+ps) + 8
 		}
 	case "fish":
 		nf := 0
