@@ -286,7 +286,7 @@ var statusNames = [numStatus]string{"Envenenado", "Congelando", "Insolação"}
 var statusDmg = [numStatus]int{3, 2, 2}
 
 // mobInflict é o status que o golpe de cada inimigo pode deixar (35% das vezes).
-var mobInflict = map[int]int{mobSpider: stPoison, mobTroll: stPoison, mobScarab: stPoison,
+var mobInflict = map[int]int{mobLeech: stPoison, mobHeathWitch: stPoison, mobSpider: stPoison, mobTroll: stPoison, mobScarab: stPoison,
 	mobIceWolf: stCold, mobYeti: stCold, mobFrostGiant: stCold, mobMummy: stHeat, mobPharaoh: stHeat,
 	mobMagmaGolem: stHeat, mobIgnar: stHeat, mobFungusHusk: stPoison,
 	mobSandScorpion: stPoison, mobIceWraith: stCold, mobRootHorror: stPoison, mobVulkhar: stHeat}

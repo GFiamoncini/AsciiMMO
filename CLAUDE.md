@@ -564,6 +564,23 @@ temporária da sessão (yt-dlp.exe do GitHub, ffmpeg-release-essentials do gyan.
 - **Fogueira**: painel com Descansar aqui (E), Viagem rápida (V), Descansar e sair do jogo, e esperar por ícones
   com dica (1–5: amanhecer, meio-dia, anoitecer, meia-noite, o tempo virar).
 
+## Mapa em escala 3 e biomas novos (15/10/2026)
+
+- **`mapScale = 3`** (escolha dele: "Escala 3"): continente 4608×3600, mundo 4608×7440. `bsF = mapScale/2` faz os
+  biomas (deserto, gelo, pântano, selva, Talássia, montanhas, lago, Cavernas de Cristal) crescerem junto; regiões
+  desses biomas também (`105 * mapScale` etc.). Construções ficam do mesmo tamanho. Posições que eram absolutas
+  passaram a escalar (ninho de Tiamath, um trecho de trilha, marcos); a Cidadela fica na mesma distância da Selva;
+  Grael nasce no chão livre mais perto. Mapa baixado: ~37 MB comprimido (era ~14). Suíte de testes: ~10 min.
+- **Névoa**: o save guarda `FogW` (largura do mapa); com outra largura a névoa é descartada (servidor) e o arquivo
+  local passou a ter a largura no nome (`nevoa_<nome>_<w>.bin`).
+- **Biomas novos** (`servidor/biomas_novos.go`): Brejo das Garças (lama e juncos), Mangue de Sal (canais), Floresta
+  Cinzenta (mata morta), Planalto dos Ventos (capim alto), Charneca Roxa (urze). Ganchos: `newBiomeWater` (antes do
+  chão), `newBiomeGround` (em `ground`), `forestMod`, `newBiomeLeaf`. Regiões e fogueiras no fim das listas; trilhas
+  novas. 10 inimigos novos no fim dos tipos (Sapo-Boi, Sanguessuga, Caranguejo de Lodo, Crocodilo, Corvo, Lobisomem,
+  Harpia, Centauro, Mariposa, Bruxa), com nível, saque, bestiário, aparência (`mobStyles`) e voz. TestBiomasNovos.
+- **Bug antigo**: personagem novo renascia na "última fogueira" (que deixou de ser a do Despertar); agora
+  `introBonfire()` procura pelo nome.
+
 ## Fila (próximas rodadas)
 
 - **Faixa dos Planos** (pedido "aumentar o mapa"): terceira faixa abaixo das Profundezas (parte 2 do mapa, baixada à
@@ -629,7 +646,7 @@ Acrescentados em 14/10/2026 (lista colada pelo usuário):
   o que a luz do jogador, as tochas e os cogumelos alcançam.
 - **Inimigos**: contagem reduzida (~40%); ratos saíram da vila e moram nas cavernas. `TestBiomas` exige ao menos 4 de cada
   inimigo comum.
-- Gerar o mundo leva ~2 s (os testes criam vários mundos; a suíte leva ~30 s).
+- Gerar o mundo leva ~5 s na escala 3 (os testes criam vários mundos; a suíte leva ~10 min).
 - **Mapa maior** (14/10, segunda rodada): ele achou que andava pouco e já achava os biomas. `mapScale = 2` multiplica
   as posições das regiões (continente 3072x2400); construções mantêm o tamanho; biomas ficaram ~1,4x maiores. A geração
   das células roda em paralelo (`parallelRows`); o mundo leva ~2,3 s e o mapa empacotado tem ~14 MB.

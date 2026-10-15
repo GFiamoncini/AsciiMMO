@@ -13,7 +13,12 @@ type rgb uint32
 // mapScale afasta as regiões umas das outras: o continente tem o dobro do
 // lado, e entre elas sobram ermos para explorar. As construções de cada
 // região mantêm o tamanho.
-const mapScale = 2
+const mapScale = 3 // era 2; em 15/10 ele achou o mapa pequeno (chegava rápido a Tiamath)
+
+// bsF é quanto os biomas (deserto, gelo, pântano, selva, mar, montanhas, lago)
+// crescem em relação à escala 2, para não virarem ilhas num mar de floresta.
+// As construções (vila, cidadela, castelo, acampamento) mantêm o tamanho.
+const bsF = float64(mapScale) / 2
 
 const (
 	worldW, worldH = 1536 * mapScale, deepY0 + deepH // continente, cripta/cavernas e Profundezas (depths.go)
@@ -22,11 +27,11 @@ const (
 
 	villageX, villageY = 390 * mapScale, 630 * mapScale
 	hubX, hubY         = 840 * mapScale, 570 * mapScale  // Encruzilhada Queimada: o antigo covil, onde os caminhos se cruzam
-	lairX, lairY       = 560, 430                        // Pico de Tiamath, no alto das montanhas a noroeste
+	lairX, lairY       = 280 * mapScale, 215 * mapScale  // Pico de Tiamath, no alto das montanhas a noroeste
 	graveX, graveY     = 390 * mapScale, 465 * mapScale  // centro da clareira do cemitério
 	chapelX, chapelY   = graveX, graveY - 53             // meio da soleira da capela
 	jungleX, jungleY   = 1230 * mapScale, 450 * mapScale // Selva de Marapá
-	citadelX, citadelY = 1260 * mapScale, 398 * mapScale // pátio da Cidadela Asura
+	citadelX, citadelY = jungleX + 60, jungleY - 104     // pátio da Cidadela Asura, dentro da selva (mesma distância de antes)
 	radiantX, radiantY = 780 * mapScale, 960 * mapScale  // Bastião Radiante
 	tideX, tideY       = 1200 * mapScale, 915 * mapScale // Talássia
 )
@@ -44,15 +49,15 @@ const (
 )
 
 func desertDist(px, py float64) float64 {
-	return math.Hypot((px-desertX)/280, (py-desertY)/175)
+	return math.Hypot((px-desertX)/(280*bsF), (py-desertY)/(175*bsF))
 }
 
 func snowDist(px, py float64) float64 {
-	return math.Hypot((px-snowX)/266, (py-snowY)/175)
+	return math.Hypot((px-snowX)/(266*bsF), (py-snowY)/(175*bsF))
 }
 
 func swampDist(px, py float64) float64 {
-	return math.Hypot((px-swampX)/182, (py-swampY)/140)
+	return math.Hypot((px-swampX)/(182*bsF), (py-swampY)/(140*bsF))
 }
 
 const (
@@ -82,9 +87,9 @@ var paths = [][4]float64{
 	{hubX + 80, hubY + 30, swampX - 70, swampY - 20},
 	{graveX - 70, graveY, lairX + 30, lairY + 100}, // trilha da subida às montanhas
 	{villageX + 150, villageY + 140, orcX - 40, orcY - 10},
-	{1623, 760, castleX0 - 4, breachY},                         // trilha até a brecha das Ruínas de Vaelor
-	{introGateX + 4, introGateY, villageX - 20, villageY + 40}, // do Vale do Despertar à vila
-	{hubX - 60, hubY + 30, masterX + 20, masterY},              // trilha até o Mestre Oren
+	{1623 * mapScale / 2, 760 * mapScale / 2, castleX0 - 4, breachY}, // trilha até a brecha das Ruínas de Vaelor
+	{introGateX + 4, introGateY, villageX - 20, villageY + 40},       // do Vale do Despertar à vila
+	{hubX - 60, hubY + 30, masterX + 20, masterY},                    // trilha até o Mestre Oren
 }
 
 // region dá nome a um pedaço do mapa, para o minimapa e as missões.
@@ -97,30 +102,30 @@ var regions = []region{
 	{"Cidadela Asura", citadelX, citadelY, 50},
 	{"Vila", villageX, villageY, 80},
 	{"Cemitério", graveX, graveY, 80},
-	{"Pico de Tiamath", lairX, lairY, 110},
-	{"Selva de Marapá", jungleX, jungleY, 280},
+	{"Pico de Tiamath", lairX, lairY, 55 * mapScale},
+	{"Selva de Marapá", jungleX, jungleY, 140 * mapScale},
 	{"Bastião Radiante", radiantX, radiantY, 120},
-	{"Talássia", tideX, tideY, 210},
-	{"Deserto de Ankar", desertX, desertY, 210},
-	{"Picos de Gelo", snowX, snowY, 200},
-	{"Pântano de Venor", swampX, swampY, 155},
+	{"Talássia", tideX, tideY, 105 * mapScale},
+	{"Deserto de Ankar", desertX, desertY, 105 * mapScale},
+	{"Picos de Gelo", snowX, snowY, 100 * mapScale},
+	{"Pântano de Venor", swampX, swampY, 155 * mapScale / 2},
 	{"Acampamento Orc", orcX, orcY, 60},
-	{"Lago Espelhado", lakeX - lakeRX - 14, lakeY, 120},
+	{"Lago Espelhado", lakeX - lakeRX - 14, lakeY, 60 * mapScale},
 	{"Encruzilhada Queimada", hubX, hubY, 85},
 	{"Ruínas de Vaelor", castleX, castleCY, 135},
 	{"Vale do Despertar", introX, introY, 80},
 	{"Terreiro das Sequências", masterX, masterY, 26},
 	// Profundezas: os biomas de baixo, cada um sob o que lhe dá nome.
-	{"Ventre de Fogo", lairX, deepY0 + lairY, 260},
-	{"Grutas de Arenito", desertX, deepY0 + desertY, 220},
-	{"Gelo Antigo", snowX, deepY0 + snowY, 210},
-	{"Jardim de Fungos", swampX, deepY0 + swampY, 170},
-	{"Raízes de Marapá", jungleX, deepY0 + jungleY, 280},
+	{"Ventre de Fogo", lairX, deepY0 + lairY, 130 * mapScale},
+	{"Grutas de Arenito", desertX, deepY0 + desertY, 110 * mapScale},
+	{"Gelo Antigo", snowX, deepY0 + snowY, 105 * mapScale},
+	{"Jardim de Fungos", swampX, deepY0 + swampY, 85 * mapScale},
+	{"Raízes de Marapá", jungleX, deepY0 + jungleY, 140 * mapScale},
 	{"Raízes da Árvore Divina", treeX, deepY0 + treeY, 110},
 	{"Árvore Divina", treeX, treeY - 30, 130},
 	{dorrimName, dorrimX, dorrimY, 60},       // ruínas anãs nas Profundezas (dorrim.go)
 	{"Abismo de Dorrim", abyssX, abyssY, 50}, // a ponte e Vulkhar (vulkhar.go)
-	{"Cavernas de Cristal", crystalX, crystalY, 220},
+	{"Cavernas de Cristal", crystalX, crystalY, 110 * mapScale},
 }
 
 // regionAt devolve o índice da região que contém o ponto, ou -1.
@@ -183,7 +188,7 @@ func graveDist(px, py float64) float64 {
 }
 
 func jungleDist(px, py float64) float64 {
-	return math.Hypot((px-jungleX)/308, (py-jungleY)/266)
+	return math.Hypot((px-jungleX)/(308*bsF), (py-jungleY)/(266*bsF))
 }
 
 func radiantDist(px, py float64) float64 {
@@ -191,7 +196,7 @@ func radiantDist(px, py float64) float64 {
 }
 
 func tideDist(px, py float64) float64 {
-	return math.Hypot((px-tideX)/231, (py-tideY)/182)
+	return math.Hypot((px-tideX)/(231*bsF), (py-tideY)/(182*bsF))
 }
 
 // landAt é positivo em terra firme e negativo no mar; perto de zero é praia.

@@ -367,6 +367,34 @@ var mobStyles = func() []bodyStyle {
 		// Golem de Cristal: corpo de quartzo violeta, cheio de brilhos.
 		{head: "hair", hair: pc(200, 170, 255), skin: pc(170, 150, 230), torso: pc(140, 120, 210), torso2: pc(230, 210, 255), belt: pc(200, 180, 255),
 			arm: pc(170, 150, 230), legs: pc(120, 100, 190), boots: pc(90, 76, 150), weapon: "club", wlen: 4, scale: 1.5, aura: true, seed: 96},
+		// Biomas novos da escala 3 (servidor/biomas_novos.go), na ordem dos tipos.
+		// Sapo-Boi: atarracado, largo e baixo, verde de lama.
+		{beast: 4, blen: 2.5, br: 3, bh: 1.2, c1: pc(90, 130, 60), c2: pc(160, 170, 90), seed: 97},
+		// Sanguessuga Gigante: comprida, rente ao chão, cor de sangue velho.
+		{beast: 6, blen: 5, br: 1.6, bh: 1, c1: pc(70, 40, 50), c2: pc(130, 60, 70), seed: 98},
+		// Caranguejo de Lodo: largo, de patas abertas.
+		{beast: 8, blen: 2.5, br: 3.4, bh: 2.2, c1: pc(130, 90, 60), c2: pc(200, 120, 70), arch: true, seed: 99},
+		// Crocodilo do Mangue: comprido, baixo, de cauda grossa.
+		{beast: 6, blen: 9, br: 2.6, bh: 1.4, c1: pc(60, 84, 50), c2: pc(110, 124, 70), tail: true, seed: 100},
+		// Corvo Carniceiro: preto, voando baixo.
+		{beast: 2, fly: true, blen: 0.8, br: 1.4, bh: 9, c1: pc(30, 28, 36), c2: pc(80, 76, 90), seed: 101},
+		// Lobisomem: homem-lobo grande, pelo escuro, garras.
+		with(orc, func(s *bodyStyle) {
+			s.hair, s.skin, s.arm, s.torso, s.legs, s.boots = pc(60, 50, 44), pc(110, 92, 74), pc(110, 92, 74), pc(84, 70, 56), pc(70, 58, 46), pc(50, 40, 32)
+			s.weapon, s.wlen, s.scale, s.seed = "club", 1, 1.5, 102
+		}),
+		// Harpia: asas largas cor de areia, voando alto.
+		{beast: 2, fly: true, blen: 1.2, br: 2, bh: 12, c1: pc(150, 110, 80), c2: pc(220, 190, 150), ears: true, hr: 1.3, seed: 103},
+		// Centauro Errante: guerreiro do planalto de lança comprida.
+		{head: "hair", hair: pc(90, 60, 30), skin: pc(200, 150, 110), torso: pc(130, 90, 50), torso2: pc(200, 170, 90), belt: pc(90, 60, 30),
+			arm: pc(200, 150, 110), legs: pc(110, 70, 40), boots: pc(70, 46, 26), weapon: "lance", wlen: 18, scale: 1.4, seed: 104},
+		// Mariposa Gigante: asas pálidas de pó.
+		{beast: 2, fly: true, blen: 1, br: 2.4, bh: 10, c1: pc(150, 140, 110), c2: pc(225, 215, 175), seed: 105},
+		// Bruxa da Charneca: manto e chapéu roxos, cajado de urze.
+		with(mummy, func(s *bodyStyle) {
+			s.head, s.hat, s.hair, s.skin, s.torso, s.torso2, s.arm, s.legs, s.boots = "hat", pc(90, 40, 110), pc(170, 170, 170), pc(180, 170, 150), pc(80, 40, 90), pc(150, 80, 160), pc(180, 170, 150), pc(70, 36, 80), pc(40, 24, 46)
+			s.robe, s.weapon, s.wlen, s.orb, s.seed = true, "staff", 13, pc(190, 100, 230), 106
+		}),
 	}
 }()
 

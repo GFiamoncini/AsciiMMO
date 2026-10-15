@@ -116,7 +116,7 @@ func (wd *World) marksFor(p *Player) []proto.Mark {
 		case qTalk:
 			sp = questSpot{X: hermit.X, Y: hermit.Y, R: 8}
 		case qRest:
-			b := wd.bonfires[len(wd.bonfires)-1]
+			b := wd.bonfires[wd.introBonfire()]
 			sp = questSpot{X: b.X, Y: b.Y, R: 8}
 		}
 		add(sp, s.Text, false)

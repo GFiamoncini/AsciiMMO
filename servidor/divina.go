@@ -95,7 +95,11 @@ func (wd *World) buildDivineTree(seed uint32) {
 	// Apóstolos rondam a clareira; Grael a guarda.
 	wd.scatter(mobApostle, treeX, treeY, apostleRoamR, apostleRoamRMin, 5, seed+1414)
 	wd.scatter(mobApostle, castleX, castleCY, 120, 40, 2, seed+1415)
-	wd.spawns = append(wd.spawns, spawnPt{graelX, graelY, mobGrael})
+	gx, gy := graelX, graelY
+	if x, y, ok := wd.freeNear(graelX, graelY, 30); ok {
+		gx, gy = x, y // o terreno em volta muda com a escala: nasce no chão livre mais perto
+	}
+	wd.spawns = append(wd.spawns, spawnPt{gx, gy, mobGrael})
 }
 
 // abyssStep: a Armadura do Abismo cobra vida a cada segundo (sem matar).

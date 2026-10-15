@@ -824,6 +824,24 @@ func genVoices(s map[string][]wave) {
 		w.add(formantVoice(r, 1.0, func(t float64) float64 { return 75 }, "ou", 0.5, 0.3, 0.2, 0.3), 0.2, 0.8)
 		put("roots", w)
 	}
+	// Corvo: grasnado rouco, duas vezes.
+	{
+		w := secs(0.7)
+		for j := 0; j < 2; j++ {
+			w.add(formantVoice(r, 0.22, func(t float64) float64 { return 520 - 120*t }, "aa", 1.2, 0.3, 0.005, 0.06).drive(2), float64(j)*0.28, 1)
+		}
+		put("crow", w)
+	}
+	// Harpia: grito agudo que cai.
+	put("harpy", formantVoice(r, 0.9, func(t float64) float64 { return 900 - 400*t }, "iea", 0.6, 0.3, 0.01, 0.25).drive(1.6))
+	// Bruxa: risada em sílabas.
+	{
+		w := secs(1.1)
+		for j := 0; j < 5; j++ {
+			w.add(formantVoice(r, 0.14, func(t float64) float64 { return 320 + 40*float64(j%2) }, "ee", 0.4, 0.25, 0.005, 0.04), float64(j)*0.17, 1)
+		}
+		put("witch", w)
+	}
 	// Arconte e demônios ganham um eco de catedral.
 	put("archon", formantVoice(r, 1.5, func(t float64) float64 { return 130 + 20*math.Sin(t*6) }, "aoa", 0.2, 0.1, 0.2, 0.5).echo(0.25, 0.45))
 }

@@ -127,3 +127,13 @@ func prologueQuest(p *Player) *proto.Quest {
 	}
 	return q
 }
+
+// introBonfire é o índice da Fogueira do Despertar.
+func (wd *World) introBonfire() int {
+	for i, b := range wd.bonfires {
+		if b.Name == "Fogueira do Despertar" {
+			return i
+		}
+	}
+	return 0
+}

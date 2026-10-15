@@ -207,7 +207,7 @@ func (wd *World) findPathR(sx, sy, gx, gy, r int) [][2]int {
 // encostam o corpo na parede nem entram em fresta onde não cabem.
 func mobRad(kind int) int {
 	switch kind {
-	case mobApostle, mobGrael, mobMagmaGolem, mobCrystalGolem, mobTroll, mobYeti, mobFrostGiant, mobIgnar, mobVulkhar, mobOrcChief, mobDwarfGuard:
+	case mobApostle, mobGrael, mobMagmaGolem, mobCrystalGolem, mobTroll, mobYeti, mobFrostGiant, mobIgnar, mobVulkhar, mobOrcChief, mobDwarfGuard, mobCroc, mobWerewolf, mobCentaur:
 		return 2
 	case mobRat, mobBat, mobScarab, mobDummy:
 		return 0

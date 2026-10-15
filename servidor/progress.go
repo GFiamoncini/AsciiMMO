@@ -303,6 +303,7 @@ type saveData struct {
 	SteedSeen  uint32
 	BestKills  []int
 	Mode       int // modo de combate
+	FogW       int // largura do mapa quando a névoa foi gravada (outra largura: descarta)
 }
 
 func hashToken(token string) string {
@@ -321,7 +322,7 @@ func (wd *World) persist(p *Player) {
 	}
 	b, err := json.MarshalIndent(saveData{p.token, p.Class, p.Level, p.XP, p.Gold, p.Points, p.SkillPts, p.Attr, [numOldTree]int{},
 		p.inv, p.Equip, p.Skin, p.Quest, p.QProg, p.QStep, p.Unlocked, p.Kills, p.Chests, p.Bosses, p.Seen, p.Ach, p.Helm, p.Boots, p.Amulet,
-		p.Steeds, p.LastSteed, 1, p.SideProg, p.SideDone, p.Bonfire, p.tokens, p.password, p.Moored, p.MoorX, p.MoorY, packFog(p.fog), p.Web, p.Bar[:], p.Slain, p.Bag, p.Found, p.Tech, p.Gates, &p.Intro, 1, true, p.X, p.Y, p.LightSlot, p.House, p.Stash, p.StashGold, p.FishKinds, p.FishBodies, p.BestSeen, p.SteedSeen, p.BestKills, p.Mode}, "", "\t")
+		p.Steeds, p.LastSteed, 1, p.SideProg, p.SideDone, p.Bonfire, p.tokens, p.password, p.Moored, p.MoorX, p.MoorY, packFog(p.fog), p.Web, p.Bar[:], p.Slain, p.Bag, p.Found, p.Tech, p.Gates, &p.Intro, 1, true, p.X, p.Y, p.LightSlot, p.House, p.Stash, p.StashGold, p.FishKinds, p.FishBodies, p.BestSeen, p.SteedSeen, p.BestKills, p.Mode, worldW}, "", "\t")
 	if err != nil || os.MkdirAll(wd.saveDir, 0o755) != nil {
 		return
 	}
@@ -378,6 +379,9 @@ func (wd *World) JoinSaved(name string, class int, token, password string) (int,
 		p.apply(sv)
 		p.tokens, p.password = sv.allTokens(), sv.Password
 		p.fog = wd.unpackFog(sv.Fog)
+		if sv.FogW != worldW { // névoa de outra escala de mapa: as linhas não batem mais
+			p.fog = nil
+		}
 		if p.inPrologue() { // ainda no prólogo: volta ao vale
 			p.X, p.Y = wd.introSpawn()
 		} else {
@@ -387,7 +391,7 @@ func (wd *World) JoinSaved(name string, class int, token, password string) (int,
 		// Personagem novo: acorda no Vale do Despertar, no começo do prólogo.
 		p.Intro = 0
 		p.X, p.Y = wd.introSpawn()
-		p.Bonfire = len(wd.bonfires) - 1
+		p.Bonfire = wd.introBonfire() // a do Despertar (antes era a última da lista, que deixou de ser ela)
 	}
 	if !has1(p.tokens, tok) {
 		p.tokens = append(p.tokens, tok)

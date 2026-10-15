@@ -283,8 +283,8 @@ var landmarks = []struct {
 }{
 	{villageX + 135, villageY - 40, 24, "vigia"},
 	{hubX - 40, hubY - 210, 24, "vigia-ruina"},
-	{770, 1560, 24, "vigia-ruina"},
-	{690, 760, 24, "vigia-ruina"},
+	{385 * mapScale, 780 * mapScale, 24, "vigia-ruina"},
+	{345 * mapScale, 380 * mapScale, 24, "vigia-ruina"},
 	{graveX + 100, graveY - 30, 50, "arcos"},
 	{villageX - 260, villageY - 120, 50, "menires"},
 	{villageX + 178, villageY - 67, 24, "cofre"},

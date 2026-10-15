@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/base64"
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"image/color"
@@ -72,7 +73,8 @@ func (g *Game) buildMinimap() {
 }
 
 func (g *Game) fogPath() string {
-	return filepath.Join(configDir(), "nevoa_"+strings.ToLower(g.charName)+".bin")
+	// A largura do mapa entra no nome: com outra escala, a névoa antiga não serve.
+	return filepath.Join(configDir(), fmt.Sprintf("nevoa_%s_%d.bin", strings.ToLower(g.charName), g.m.w))
 }
 
 // A névoa do mapa: uma célula do minimapa só aparece depois de o jogador

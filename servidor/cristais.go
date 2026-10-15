@@ -10,7 +10,7 @@ var crystalX, crystalY = lakeX, deepY0 + lakeY
 // crystalDist passa de 1 fora das Cavernas de Cristal (coordenadas da
 // superfície).
 func crystalDist(x, yy float64) float64 {
-	return ((x-lakeX)/260)*((x-lakeX)/260) + ((yy-lakeY)/170)*((yy-lakeY)/170)
+	return ((x-lakeX)/(260*bsF))*((x-lakeX)/(260*bsF)) + ((yy-lakeY)/(170*bsF))*((yy-lakeY)/(170*bsF))
 }
 
 // O cofre de cristal: um cofre de pedra no salão central, de porta selada.

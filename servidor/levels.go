@@ -18,6 +18,7 @@ var mobLevel = map[int]int{
 	mobTriton: 10, mobOrcChief: 11, mobScarab: 12, mobMummy: 13, mobTyrant: 13,
 	mobSentinel: 14, mobIceWolf: 15, mobPharaoh: 16, mobYeti: 17, mobArchon: 17, mobFrostGiant: 20,
 	mobCrawler: 16, mobFungusHusk: 17, mobMagmaGolem: 19, mobIgnar: 22, mobApostle: 18, mobGrael: 23, mobSandScorpion: 16, mobRootHorror: 17, mobIceWraith: 18, mobDwarfGuard: 18, mobVulkhar: 27, mobCrystalGolem: 20,
+	mobBullFrog: 5, mobLeech: 7, mobHarpy: 8, mobMudCrab: 9, mobCrow: 10, mobMoth: 11, mobCentaur: 12, mobCroc: 13, mobWerewolf: 15, mobHeathWitch: 16,
 }
 
 func mobLv(kind int) int {

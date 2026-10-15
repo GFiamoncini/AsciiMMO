@@ -18,6 +18,7 @@ var mobVoice = []string{
 	"rat", "wolf", "orc", "orc", "orc", "scarab", "mummy", "mummy", "wolf", "yeti", "giant", // rato, lobo, orcs, escaravelho, múmia, faraó, lobo do gelo, yeti, gigante
 	"spider", "troll", "bat", "", "crawler", "golem", "fungus", "demon", "apostle", "apostle", // aranha, troll, morcego, boneco, rastejante, golem de magma, fungo, Ignar, apóstolo, Grael
 	"scorpion", "wraith", "roots", "dwarf", "demon", "golem", // escorpião, espectro, raízes, anão, Vulkhar, golem de cristal
+	"frog", "gurgle", "scarab", "growl", "crow", "wolf", "harpy", "horse", "bat", "witch", // biomas novos: sapo-boi … bruxa
 }
 
 // Material de quem apanha: 1 osso, 2 pedra (o resto é carne).
@@ -25,7 +26,7 @@ func mobMat(kind int) int {
 	switch kind {
 	case 0, 1, 2:
 		return 1
-	case 5, 25, 33, 35:
+	case 5, 25, 33, 35, 38: // sentinela, golens, anão, caranguejo
 		return 2
 	}
 	return 0

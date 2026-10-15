@@ -194,6 +194,7 @@ var mobReward = map[int]reward{
 	mobIceWolf: {26, 14}, mobYeti: {40, 22}, mobFrostGiant: {600, 380},
 	mobSpider: {24, 12}, mobTroll: {34, 18}, mobBat: {8, 4}, mobDummy: {3, 0},
 	mobCrawler: {44, 24}, mobFungusHusk: {48, 26}, mobMagmaGolem: {60, 32}, mobIgnar: {900, 600}, mobApostle: {70, 40}, mobGrael: {1100, 700}, mobSandScorpion: {46, 24}, mobIceWraith: {54, 30}, mobRootHorror: {56, 30}, mobDwarfGuard: {62, 34}, mobVulkhar: {1800, 1200}, mobCrystalGolem: {66, 36},
+	mobBullFrog: {18, 9}, mobLeech: {22, 11}, mobHarpy: {28, 14}, mobMudCrab: {32, 16}, mobCrow: {34, 17}, mobMoth: {38, 19}, mobCentaur: {48, 24}, mobCroc: {54, 28}, mobWerewolf: {64, 34}, mobHeathWitch: {70, 38},
 }
 
 // dropCoins larga um montinho de dinheiro no chão.

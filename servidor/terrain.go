@@ -24,6 +24,9 @@ func leaf(x, y int, seed uint32, light float64, pal [2]rgb) (byte, rgb) {
 }
 
 func leafPal(x, y int) [2]rgb {
+	if l, ok := newBiomeLeaf(float64(x), float64(y)); ok {
+		return l
+	}
 	switch px, py := float64(x), float64(y); {
 	case tideDist(px, py) < 1.15:
 		return leafCoral
@@ -139,6 +142,7 @@ func (wd *World) generate(seed uint32) {
 	wd.landscape(seed)
 	wd.settleProps()
 	wd.camps()
+	wd.buildNewBiomes(seed) // inimigos dos biomas novos (biomas_novos.go)
 	wd.villageDressing(seed)
 	wd.buildMerchantPosts(seed) // cabana ou barraca para os mercadores de fora da vila (lojas.go)
 	wd.houseMarks(seed)         // placas das casas à venda (casa.go)
@@ -272,8 +276,11 @@ func (wd *World) genCell(x, y int, seed uint32) {
 		wd.bog(x, y, pd < 1, seed)
 		return
 	}
+	if wd.newBiomeWater(x, y, px, py, seed) { // poças do brejo, canais do mangue (biomas_novos.go)
+		return
+	}
 	wd.ground(x, y, seed)
-	f := forestAt(x, y, seed)
+	f := forestMod(px, py, forestAt(x, y, seed))
 	// Trilhas de bicho cortam a mata fechada: sempre há por onde passar.
 	trail := math.Abs(valueNoise(px/38, py/38, seed+77)-0.5) < 0.04 || math.Abs(valueNoise(px/29+7, py/29, seed+78)-0.5) < 0.03
 	switch {
@@ -410,6 +417,11 @@ func (wd *World) ground(x, y int, seed uint32) {
 	if sd := swampDist(px, py); sd < 1.1 {
 		k := clamp01((1.1 - sd) * 4)
 		col, dens = mix(col, 0x3a5a34, k*0.8), dens+0.1*k
+	}
+	if c, d, done := wd.newBiomeGround(x, y, px, py, col, dens, seed); done {
+		return
+	} else {
+		col, dens = c, d
 	}
 	if l := landAt(px, py, seed); l < 0.07 {
 		col, dens = mix(col, 0xc2a878, clamp01((0.07-l)*30)), dens+0.1

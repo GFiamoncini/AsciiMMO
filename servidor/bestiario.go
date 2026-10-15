@@ -50,6 +50,16 @@ var bestiary = map[int]beastInfo{
 	mobRootHorror:   {"Raízes da Árvore Divina que aprenderam a caçar.", []int{elemFire}, []int{elemPoison}},
 	mobDwarfGuard:   {"Guardiões de Dorrim. Morreram de pé e continuam de guarda.", []int{elemBolt}, []int{elemPhys}},
 	mobVulkhar:      {"Vulkhar, o Flagelo das Profundezas: chicote de fogo e uma ponte só.", []int{elemIce, elemHoly}, []int{elemFire, elemShadow}},
+	mobBullFrog:     {"Sapos do tamanho de um porco que coaxam no Brejo das Garças. Engolem quem chega perto.", []int{elemBolt, elemFire}, []int{elemPoison}},
+	mobLeech:        {"Sanguessugas gigantes da lama do brejo. A mordida envenena.", []int{elemFire}, []int{elemPoison, elemPhys}},
+	mobMudCrab:      {"Caranguejos do Mangue de Sal, de casca dura como pedra.", []int{elemBolt}, []int{elemPhys}},
+	mobCroc:         {"O crocodilo do mangue espera parado e ataca de uma vez.", []int{elemIce, elemBolt}, []int{elemPhys}},
+	mobCrow:         {"Corvos da Floresta Cinzenta. Seguem os mortos e quem vai morrer.", []int{elemBolt}, nil},
+	mobWerewolf:     {"Homens que viraram lobo na mata morta. Mais fortes de noite.", []int{elemHoly, elemFire}, []int{elemShadow}},
+	mobHarpy:        {"Harpias do Planalto dos Ventos. Mergulham do céu com as garras.", []int{elemBolt, elemArcane}, nil},
+	mobCentaur:      {"Centauros errantes do planalto. Não gostam de quem cruza o capim deles.", []int{elemArcane}, []int{elemPhys}},
+	mobMoth:         {"Mariposas gigantes da Charneca. O pó das asas faz dormir.", []int{elemFire}, []int{elemPoison}},
+	mobHeathWitch:   {"As bruxas da Charneca Roxa colhem urze e almas. Envenenam com um olhar.", []int{elemHoly, elemFire}, []int{elemShadow, elemPoison}},
 	mobCrystalGolem: {"Golem de cristal das cavernas sob o lago. A luz atravessa, a lâmina não.", []int{elemPhys, elemBolt}, []int{elemArcane}},
 }
 

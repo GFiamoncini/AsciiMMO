@@ -46,6 +46,16 @@ const (
 	mobDwarfGuard
 	mobVulkhar      // o demônio do Abismo de Dorrim (vulkhar.go)
 	mobCrystalGolem // Cavernas de Cristal (cristais.go)
+	mobBullFrog     // biomas novos da escala 3 (biomas_novos.go)
+	mobLeech
+	mobMudCrab
+	mobCroc
+	mobCrow
+	mobWerewolf
+	mobHarpy
+	mobCentaur
+	mobMoth
+	mobHeathWitch
 )
 
 type mobKind struct {
@@ -97,6 +107,16 @@ var mobKinds = []mobKind{
 	mobDwarfGuard:   {"Guardião de Dorrim", 460, 0.4, 18, 9, 40, 18 * time.Second, false, 0},
 	mobVulkhar:      {vulkharName, 6200, 0.45, 30, 14, 900, 180 * time.Second, true, itemVulkharWhip},
 	mobCrystalGolem: {"Golem de Cristal", 540, 0.4, 20, 10, 46, 18 * time.Second, false, 0},
+	mobBullFrog:     {"Sapo-Boi", 110, 0.5, 7, 5, 14, 12 * time.Second, false, 0},
+	mobLeech:        {"Sanguessuga Gigante", 140, 0.45, 8, 6, 16, 12 * time.Second, false, 0},
+	mobMudCrab:      {"Caranguejo de Lodo", 220, 0.4, 11, 7, 22, 15 * time.Second, false, 0},
+	mobCroc:         {"Crocodilo do Mangue", 420, 0.5, 16, 10, 40, 20 * time.Second, false, 0},
+	mobCrow:         {"Corvo Carniceiro", 160, 0.9, 10, 6, 20, 12 * time.Second, false, 0},
+	mobWerewolf:     {"Lobisomem", 520, 0.8, 18, 12, 50, 25 * time.Second, false, 0},
+	mobHarpy:        {"Harpia", 200, 0.85, 11, 7, 24, 15 * time.Second, false, 0},
+	mobCentaur:      {"Centauro Errante", 400, 0.75, 15, 9, 38, 20 * time.Second, false, 0},
+	mobMoth:         {"Mariposa Gigante", 230, 0.7, 12, 7, 26, 15 * time.Second, false, 0},
+	mobHeathWitch:   {"Bruxa da Charneca", 480, 0.55, 19, 12, 55, 25 * time.Second, false, 0},
 }
 
 // Itens. O 0 é a poção, então Equip == 0 e Skin == 0 querem dizer "nada

@@ -27,12 +27,12 @@ func scalePts(pts [][2]float64) [][2]float64 {
 
 const (
 	lakeX, lakeY     = 980 * mapScale, 428 * mapScale
-	lakeRX, lakeRY   = 100, 56
+	lakeRX, lakeRY   = 50 * mapScale, 28 * mapScale
 	islandX, islandY = lakeX + 32, lakeY - 8
 	riverHalf        = 5.0 // meia largura do rio, em células
 
-	poisonX, poisonY = swampX + 70, swampY + 130 // Charco Venenoso, no sul do pântano
-	poisonR          = 80.0
+	poisonX, poisonY = swampX + 35*mapScale, swampY + 65*mapScale // Charco Venenoso, no sul do pântano
+	poisonR          = 40.0 * mapScale
 )
 
 // Cais: o ponto é a ponta do píer, onde se embarca (um no lago, um no rio).
@@ -119,7 +119,7 @@ func elevAt(px, py float64, seed uint32) float64 {
 }
 
 // mountDist vale menos de 1 na cordilheira de Tiamath, a parte mais alta do mapa.
-func mountDist(px, py float64) float64 { return math.Hypot((px-lairX)/260, (py-lairY)/200) }
+func mountDist(px, py float64) float64 { return math.Hypot((px-lairX)/(260*bsF), (py-lairY)/(200*bsF)) }
 
 const cliffSteps = 7.0 // degraus de altura; cada descida para o sul vira falésia
 
