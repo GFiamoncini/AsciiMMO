@@ -511,13 +511,17 @@ func (wd *World) stepBoss(now time.Time) {
 		return
 	}
 
-	target, best := wd.nearestFor(b.X, b.Y, now)
+	// Tiamath só enxerga quem já derrubou o Véu de Cinzas (veu.go) e não sai
+	// do Pico: antes ela descia atrás de quem chegasse perto e se lutava com
+	// ela sem ter feito nada da história.
+	target, best := wd.veilTarget(b.X, b.Y, now)
 	if target == nil || best > aggroRange {
 		wd.bossToward(lairX, lairY, 2)
 		b.HP = min(b.MaxHP, b.HP+8)
 		return
 	}
 	wd.bossToward(float64(target.X), float64(target.Y), 14)
+	wd.keepInPeak()
 	if best < 44 && now.After(b.nextStomp) {
 		b.armed, b.stompAt, b.stompX, b.stompY = true, now.Add(time.Second), b.X, b.Y
 		wd.effects = append(wd.effects, Effect{Kind: fxWarn, X: b.X, Y: b.Y, R: stompRadius, Start: now, Dur: time.Second})

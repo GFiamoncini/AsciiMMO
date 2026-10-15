@@ -553,6 +553,17 @@ temporária da sessão (yt-dlp.exe do GitHub, ffmpeg-release-essentials do gyan.
 - **Lembrete**: o bestiário dele estava vazio porque o servidor rodando era o das 21:36 (nunca reiniciado); mortes
   antigas não têm tipo, a contagem começa ao reiniciar.
 
+## Véu de Cinzas e fogueira nova (15/10/2026)
+
+- **Véu de Cinzas** (`servidor/veu.go`, cliente `veu.go`): o Pico de Tiamath só abre com os cinco guardiões caídos
+  (`veilBosses`: Lorde, Rainha Asura, Tirano, Faraó, Gigante de Gelo; bits de `Player.Slain`). `canEnter` e `Travel`
+  barram; Tiamath só mira quem derrubou o Véu (`veilTarget`), não sai do Pico (`keepInPeak`) e não leva dano de quem
+  não derrubou. Cada guardião purifica a região (chat; estado `pure`): no cliente, cinza caindo e borda de brasa nas
+  regiões corrompidas e muro de cinza na borda do Pico. Ele tinha chegado a Tiamath sem as missões porque ela descia
+  atrás de quem chegasse perto. TestVeu; os testes que batem em Tiamath usam `veilDown`.
+- **Fogueira**: painel com Descansar aqui (E), Viagem rápida (V), Descansar e sair do jogo, e esperar por ícones
+  com dica (1–5: amanhecer, meio-dia, anoitecer, meia-noite, o tempo virar).
+
 ## Fila (próximas rodadas)
 
 - **Faixa dos Planos** (pedido "aumentar o mapa"): terceira faixa abaixo das Profundezas (parte 2 do mapa, baixada à

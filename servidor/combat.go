@@ -172,7 +172,7 @@ func (wd *World) strikeOpt(owner int, now time.Time, lo, sp int, in shape, o hit
 	if p != nil && o.Elem != elemIce && o.Elem != elemShadow && o.Elem != elemHoly && o.Elem != elemPoison {
 		wd.cutGrass(owner, float64(p.X), float64(p.Y), in, now) // golpes físicos, de fogo e raio cortam o capim
 	}
-	if b := &wd.boss; b.Alive && in(b.X, b.Y, bossRadius) {
+	if b := &wd.boss; b.Alive && in(b.X, b.Y, bossRadius) && (p == nil || len(p.veilMissing()) == 0) { // o Véu protege Tiamath de quem não o derrubou
 		wd.hitBoss(dmg(b.X, b.Y-40, levelDragon), now)
 	}
 	for _, m := range wd.mobs {

@@ -41,3 +41,10 @@ func TestVeu(t *testing.T) {
 		t.Fatal("com os cinco guardiões caídos o Véu devia abrir")
 	}
 }
+
+// veilDown dá ao jogador os cinco guardiões do Véu (para os testes de Tiamath).
+func veilDown(p *Player) {
+	for _, v := range veilBosses {
+		p.Slain |= 1 << uint(v.kind)
+	}
+}

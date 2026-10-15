@@ -108,6 +108,7 @@ type Game struct {
 	chatPos                     int                           // posição em chatSent enquanto se navega (len = linha nova)
 	logScroll                   int                           // linhas roladas para trás no registro (L)
 	pauseMenu                   bool                          // menu de pausa aberto (pausa.go)
+	quitAt                      float64                       // sair do jogo depois de gravar (fogueira.go)
 	creatures                   map[creatureKey]*ebiten.Image // retratos do bestiário (retrato_bicho.go)
 	portG                       *gpu
 	mapZoom                     float64     // zoom do mapa grande (mapa_zoom.go)
@@ -319,6 +320,10 @@ func (g *Game) send(m proto.In) {
 
 // Update roda 60 vezes por segundo: rede, teclado e mouse.
 func (g *Game) Update() error {
+	if g.quitAt > 0 && g.now() >= g.quitAt {
+		g.leaveWorld()
+		g.quit = true
+	}
 	if g.quit {
 		return errQuit
 	}

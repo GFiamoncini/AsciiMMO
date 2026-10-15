@@ -496,6 +496,7 @@ func (g *Game) frame(screen *ebiten.Image) {
 		}
 	}
 	g.drawFishLine(me, T) // boia de pesca (pesca.go)
+	g.drawVeil(me, T)     // Véu de Cinzas e cinza nas regiões corrompidas (veu.go)
 	g.drawGoal(T)         // destino escolhido no mapa
 	var ents []ent
 	for i := range cur.Mobs {

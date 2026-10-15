@@ -17,6 +17,7 @@ func TestCombate(t *testing.T) {
 	}
 
 	p.X, p.Y, p.ready = lairX+8, lairY, [maxSkills]time.Time{}
+	veilDown(p) // sem o Véu de Cinzas caído, Tiamath não leva dano (veu.go)
 	wd.Attack(id)
 	if wd.boss.HP >= bossMaxHP {
 		t.Fatal("ataque de perto devia tirar vida do chefe")
@@ -234,6 +235,7 @@ func TestFogoInvasaoCritico(t *testing.T) {
 	b := &wd.boss
 	b.HP = 1 << 30
 	p.X, p.Y = int(b.X)+8, int(b.Y)
+	veilDown(p)
 	crit := 0
 	for k := 0; k < 200; k++ {
 		p.ready = [maxSkills]time.Time{}

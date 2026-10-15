@@ -132,6 +132,7 @@ func (g *Game) drawHUD(dst *ebiten.Image, me *proto.Player) {
 		}
 		y += (float64(len(sts)) + 0.8) * lh
 	}
+	g.veilVignette(dst, me)
 	// A borda da tela ganha a cor do mal que está agindo.
 	for i, s := range cur.Sts {
 		if s > 0 {
